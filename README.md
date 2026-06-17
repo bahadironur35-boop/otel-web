@@ -8,6 +8,7 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 - `/admin` altında yönetim paneli, rezervasyon, oda, görev ve kanal ekranları
 - Prisma ile PostgreSQL veri modeli
 - Rezervasyon, oda tipi ve görev oluşturma formları
+- Admin panel için e-posta/şifre girişi ve oturum koruması
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
@@ -43,6 +44,18 @@ npm.cmd run db:seed
 
 `DATABASE_URL` yoksa uygulama demo verilerle açılır; formlar gerçek kayıt yazmak yerine demo mod uyarısı gösterir.
 
+## Admin girişi
+
+Admin paneli `/login` sayfasından açılır. Yerelde ve Vercel'de şu environment variable değerleri gerekir:
+
+```env
+ADMIN_EMAIL="admin@example.com"
+ADMIN_PASSWORD="güçlü-bir-şifre"
+SESSION_SECRET="uzun-rastgele-bir-değer"
+```
+
+`SESSION_SECRET` için uzun, tahmin edilmesi zor bir metin kullanın.
+
 ## GitHub'a gönderme
 
 ```bash
@@ -62,7 +75,8 @@ git push -u origin main
 4. Framework preset olarak **Next.js** seçilir.
 5. Build command `next build` olarak kalabilir.
 6. Output directory boş bırakılır.
-7. Gerçek veri için Vercel Environment Variables alanına `DATABASE_URL` eklenir.
+7. Gerçek veri için Vercel Environment Variables alanına `DATABASE_URL` ve `DIRECT_URL` eklenir.
+8. Admin girişi için `ADMIN_EMAIL`, `ADMIN_PASSWORD` ve `SESSION_SECRET` eklenir.
 7. Deploy butonuna basılır.
 
 Vercel CLI kullanmak isterseniz:

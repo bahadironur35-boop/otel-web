@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { logoutAction } from "@/app/login/actions";
+import { requireAdmin } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 const navItems = [
   ["Özet", "/admin"],
@@ -8,7 +12,9 @@ const navItems = [
   ["Kanallar", "/admin/channels"]
 ];
 
-export default function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  await requireAdmin();
+
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar" aria-label="Yönetim menüsü">
@@ -23,9 +29,16 @@ export default function AdminLayout({ children }: Readonly<{ children: React.Rea
             </Link>
           ))}
         </nav>
-        <Link className="back-link" href="/">
-          Siteye dön
-        </Link>
+        <div className="admin-sidebar-actions">
+          <Link className="back-link" href="/">
+            Siteye dön
+          </Link>
+          <form action={logoutAction}>
+            <button className="back-link logout-button" type="submit">
+              Çıkış yap
+            </button>
+          </form>
+        </div>
       </aside>
       <section className="admin-content">{children}</section>
     </main>
