@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReservationStatus {
+  NEW
+  CONFIRMED
+  PAYMENT_PENDING
+  CANCELLED
+}
+
+enum RoomStatus {
+  READY
+  CLEANING
+  MAINTENANCE
+  EXTRA_BED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ChannelStatus {
+  SYNCED
+  DELAYED
+  ACTION_REQUIRED
+}
+
+model Hotel {
+  id           String        @id @default(cuid())
+  name         String
+  slug         String        @unique
+  city         String
+  country      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  rooms        RoomType[]
+  reservations Reservation[]
+  tasks        Task[]
+  channels     Channel[]
+}
+
+model RoomType {
+  id           String        @id @default(cuid())
+  hotelId      String
+  hotel        Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  name         String
+  capacity     String
+  nightlyRate  Int
+  currency     String        @default("TRY")
+  status       RoomStatus    @default(READY)
+  inventory    Int           @default(1)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  reservations Reservation[]
+}
+
+model Reservation {
+  id          String            @id @default(cuid())
+  hotelId     String
+  hotel       Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  roomTypeId  String
+  roomType    RoomType          @relation(fields: [roomTypeId], references: [id])
+  guestName   String
+  guestEmail  String?
+  checkIn     DateTime
+  checkOut    DateTime
+  guests      Int               @default(2)
+  channel     String            @default("Web sitesi")
+  status      ReservationStatus @default(NEW)
+  totalAmount Int
+  currency    String            @default("TRY")
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model Task {
+  id        String       @id @default(cuid())
+  hotelId   String
+  hotel     Hotel        @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  title     String
+  owner     String
+  dueAt     DateTime
+  priority  TaskPriority @default(MEDIUM)
+  done      Boolean      @default(false)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Channel {
+  id        String        @id @default(cuid())
+  hotelId   String
+  hotel     Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  name      String
+  status    ChannelStatus @default(SYNCED)
+  inventory Int           @default(0)
+  alert     String        @default("Sorun yok")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@unique([hotelId, name])
+}

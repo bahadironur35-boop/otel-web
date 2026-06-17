@@ -583,6 +583,74 @@ h3 {
   margin-top: 0;
 }
 
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(19, 32, 31, 0.06);
+}
+
+.admin-form.compact {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.admin-form button {
+  align-self: end;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.notice {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border: 1px solid #d8e6de;
+  border-radius: 8px;
+  color: var(--teal-dark);
+  background: #edf7f1;
+  font-weight: 700;
+}
+
+.notice.success {
+  border-color: #cfe6d1;
+  color: #236b35;
+  background: #eef8ee;
+}
+
+.notice.danger {
+  border-color: #f1c8c0;
+  color: #9f3f2f;
+  background: #fff0ed;
+}
+
 .admin-row,
 .task-row,
 .table-head,
@@ -667,7 +735,9 @@ h3 {
   .ops-board,
   .admin-metrics,
   .admin-grid,
-  .admin-grid.three {
+  .admin-grid.three,
+  .admin-form,
+  .admin-form.compact {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -708,7 +778,9 @@ h3 {
   .ops-board,
   .admin-metrics,
   .admin-grid,
-  .admin-grid.three {
+  .admin-grid.three,
+  .admin-form,
+  .admin-form.compact {
     grid-template-columns: 1fr;
   }
 

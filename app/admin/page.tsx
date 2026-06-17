@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { channels, reservations, rooms, tasks } from "@/lib/data";
+import { getHotelData } from "@/lib/data";
 
-export default function AdminHomePage() {
+export default async function AdminHomePage() {
+  const { channels, reservations, rooms, tasks } = await getHotelData();
+
   return (
     <>
       <div className="admin-topline">

@@ -6,6 +6,8 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 
 - Misafir tarafı için tanıtım ve rezervasyon arama ekranı
 - `/admin` altında yönetim paneli, rezervasyon, oda, görev ve kanal ekranları
+- Prisma ile PostgreSQL veri modeli
+- Rezervasyon, oda tipi ve görev oluşturma formları
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
@@ -24,6 +26,22 @@ Bağımlılıkları kurduktan sonra geliştirme sunucusunu başlatabilirsiniz.
 npm.cmd install
 npm.cmd run dev
 ```
+
+## Veritabanı
+
+Proje PostgreSQL için hazırlandı. Supabase, Neon veya Vercel Postgres kullanılabilir.
+
+1. `.env.example` dosyasını `.env` olarak kopyalayın.
+2. `DATABASE_URL` değerini PostgreSQL bağlantı adresinizle doldurun.
+3. Şemayı veritabanına gönderin.
+4. Demo verileri yükleyin.
+
+```bash
+npm.cmd run db:push
+npm.cmd run db:seed
+```
+
+`DATABASE_URL` yoksa uygulama demo verilerle açılır; formlar gerçek kayıt yazmak yerine demo mod uyarısı gösterir.
 
 ## GitHub'a gönderme
 
@@ -44,6 +62,7 @@ git push -u origin main
 4. Framework preset olarak **Next.js** seçilir.
 5. Build command `next build` olarak kalabilir.
 6. Output directory boş bırakılır.
+7. Gerçek veri için Vercel Environment Variables alanına `DATABASE_URL` eklenir.
 7. Deploy butonuna basılır.
 
 Vercel CLI kullanmak isterseniz:

@@ -1,6 +1,8 @@
-import { channels } from "@/lib/data";
+import { getHotelData } from "@/lib/data";
 
-export default function ChannelsPage() {
+export default async function ChannelsPage() {
+  const { channels } = await getHotelData();
+
   return (
     <>
       <div className="admin-topline">

@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { channels, reservations, rooms, tasks } from "@/lib/data";
+import { getHotelData } from "@/lib/data";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const { channels, rooms, tasks } = await getHotelData();
+
   return (
     <main id="top">
       <section className="hero" aria-labelledby="hero-title">

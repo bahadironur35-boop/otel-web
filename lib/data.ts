@@ -1,3 +1,6 @@
+import { formatCurrency, formatDateRange } from "@/lib/format";
+import { hasDatabase, prisma } from "@/lib/prisma";
+
 export const rooms = [
   {
     name: "Deniz Suite",
@@ -90,3 +93,123 @@ export const channels = [
     alert: "Stok güncellemesi 18 dakika gecikti"
   }
 ];
+
+const statusLabels = {
+  NEW: "Yeni",
+  CONFIRMED: "Onaylandı",
+  PAYMENT_PENDING: "Ödeme bekliyor",
+  CANCELLED: "İptal edildi",
+  READY: "Hazır",
+  CLEANING: "Temizlikte",
+  MAINTENANCE: "Bakımda",
+  EXTRA_BED: "Ekstra yatak",
+  LOW: "Düşük",
+  MEDIUM: "Orta",
+  HIGH: "Yüksek",
+  SYNCED: "Senkron",
+  DELAYED: "Gecikmeli",
+  ACTION_REQUIRED: "İşlem gerekli"
+} as const;
+
+export async function getHotelData() {
+  if (!hasDatabase) {
+    return {
+      rooms,
+      reservations,
+      tasks,
+      channels
+    };
+  }
+
+  const hotel = await prisma.hotel.findUnique({
+    where: { slug: "stayos-demo" },
+    include: {
+      rooms: {
+        orderBy: { createdAt: "asc" }
+      },
+      reservations: {
+        include: { roomType: true },
+        orderBy: { createdAt: "desc" }
+      },
+      tasks: {
+        orderBy: [{ done: "asc" }, { dueAt: "asc" }]
+      },
+      channels: {
+        orderBy: { name: "asc" }
+      }
+    }
+  });
+
+  if (!hotel) {
+    return {
+      rooms,
+      reservations,
+      tasks,
+      channels
+    };
+  }
+
+  return {
+    rooms: hotel.rooms.map((room) => ({
+      id: room.id,
+      name: room.name,
+      price: formatCurrency(room.nightlyRate, room.currency),
+      status: statusLabels[room.status],
+      occupancy: room.capacity,
+      source: "Admin panel",
+      inventory: room.inventory
+    })),
+    reservations: hotel.reservations.map((reservation) => ({
+      id: reservation.id,
+      guest: reservation.guestName,
+      room: reservation.roomType.name,
+      dates: formatDateRange(reservation.checkIn, reservation.checkOut),
+      channel: reservation.channel,
+      status: statusLabels[reservation.status],
+      amount: formatCurrency(reservation.totalAmount, reservation.currency)
+    })),
+    tasks: hotel.tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      owner: task.owner,
+      due: new Intl.DateTimeFormat("tr-TR", {
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(task.dueAt),
+      priority: statusLabels[task.priority]
+    })),
+    channels: hotel.channels.map((channel) => ({
+      id: channel.id,
+      name: channel.name,
+      status: statusLabels[channel.status],
+      inventory: `${channel.inventory} oda`,
+      alert: channel.alert
+    }))
+  };
+}
+
+export async function getRoomOptions() {
+  if (!hasDatabase) {
+    return rooms.map((room) => ({
+      id: room.name,
+      name: room.name
+    }));
+  }
+
+  const hotel = await prisma.hotel.findUnique({
+    where: { slug: "stayos-demo" },
+    include: {
+      rooms: {
+        select: {
+          id: true,
+          name: true
+        },
+        orderBy: { createdAt: "asc" }
+      }
+    }
+  });
+
+  return hotel?.rooms ?? [];
+}

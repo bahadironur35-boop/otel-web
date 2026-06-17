@@ -7,10 +7,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed"
   },
   "dependencies": {
+    "@prisma/client": "^6.19.3",
     "next": "^16.2.9",
+    "prisma": "^6.19.3",
     "react": "19.2.1",
     "react-dom": "19.2.1"
   },
@@ -18,6 +24,7 @@
     "@types/node": "22.10.7",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
+    "tsx": "^4.22.4",
     "typescript": "5.7.3"
   },
   "keywords": [
@@ -28,5 +35,11 @@
     "vercel"
   ],
   "author": "",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "overrides": {
+    "postcss": "^8.5.10"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
 }
