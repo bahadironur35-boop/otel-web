@@ -32,7 +32,7 @@ npm.cmd run dev
 Proje PostgreSQL için hazırlandı. Supabase, Neon veya Vercel Postgres kullanılabilir.
 
 1. `.env.example` dosyasını `.env` olarak kopyalayın.
-2. `DATABASE_URL` değerini PostgreSQL bağlantı adresinizle doldurun.
+2. Supabase bağlantı değerleriyle `DATABASE_URL` ve `DIRECT_URL` alanlarını doldurun.
 3. Şemayı veritabanına gönderin.
 4. Demo verileri yükleyin.
 

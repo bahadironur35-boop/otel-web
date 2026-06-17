@@ -199,12 +199,19 @@ img {
   align-items: center;
 }
 
-.section h2,
-.admin-topline h2 {
+.section h2 {
   max-width: 780px;
   margin: 0;
   font-size: clamp(2rem, 4vw, 4rem);
   line-height: 1;
+  letter-spacing: 0;
+}
+
+.admin-topline h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(2rem, 3.4vw, 3.15rem);
+  line-height: 1.08;
   letter-spacing: 0;
 }
 

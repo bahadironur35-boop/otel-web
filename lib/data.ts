@@ -121,26 +121,76 @@ export async function getHotelData() {
     };
   }
 
-  const hotel = await prisma.hotel.findUnique({
-    where: { slug: "stayos-demo" },
-    include: {
-      rooms: {
-        orderBy: { createdAt: "asc" }
-      },
-      reservations: {
-        include: { roomType: true },
-        orderBy: { createdAt: "desc" }
-      },
-      tasks: {
-        orderBy: [{ done: "asc" }, { dueAt: "asc" }]
-      },
-      channels: {
-        orderBy: { name: "asc" }
+  try {
+    const hotel = await prisma.hotel.findUnique({
+      where: { slug: "stayos-demo" },
+      include: {
+        rooms: {
+          orderBy: { createdAt: "asc" }
+        },
+        reservations: {
+          include: { roomType: true },
+          orderBy: { createdAt: "desc" }
+        },
+        tasks: {
+          orderBy: [{ done: "asc" }, { dueAt: "asc" }]
+        },
+        channels: {
+          orderBy: { name: "asc" }
+        }
       }
-    }
-  });
+    });
 
-  if (!hotel) {
+    if (!hotel) {
+      return {
+        rooms,
+        reservations,
+        tasks,
+        channels
+      };
+    }
+
+    return {
+      rooms: hotel.rooms.map((room) => ({
+        id: room.id,
+        name: room.name,
+        price: formatCurrency(room.nightlyRate, room.currency),
+        status: statusLabels[room.status],
+        occupancy: room.capacity,
+        source: "Admin panel",
+        inventory: room.inventory
+      })),
+      reservations: hotel.reservations.map((reservation) => ({
+        id: reservation.id,
+        guest: reservation.guestName,
+        room: reservation.roomType.name,
+        dates: formatDateRange(reservation.checkIn, reservation.checkOut),
+        channel: reservation.channel,
+        status: statusLabels[reservation.status],
+        amount: formatCurrency(reservation.totalAmount, reservation.currency)
+      })),
+      tasks: hotel.tasks.map((task) => ({
+        id: task.id,
+        title: task.title,
+        owner: task.owner,
+        due: new Intl.DateTimeFormat("tr-TR", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(task.dueAt),
+        priority: statusLabels[task.priority]
+      })),
+      channels: hotel.channels.map((channel) => ({
+        id: channel.id,
+        name: channel.name,
+        status: statusLabels[channel.status],
+        inventory: `${channel.inventory} oda`,
+        alert: channel.alert
+      }))
+    };
+  } catch (error) {
+    console.error("Database read failed, falling back to demo data.", error);
     return {
       rooms,
       reservations,
@@ -148,46 +198,6 @@ export async function getHotelData() {
       channels
     };
   }
-
-  return {
-    rooms: hotel.rooms.map((room) => ({
-      id: room.id,
-      name: room.name,
-      price: formatCurrency(room.nightlyRate, room.currency),
-      status: statusLabels[room.status],
-      occupancy: room.capacity,
-      source: "Admin panel",
-      inventory: room.inventory
-    })),
-    reservations: hotel.reservations.map((reservation) => ({
-      id: reservation.id,
-      guest: reservation.guestName,
-      room: reservation.roomType.name,
-      dates: formatDateRange(reservation.checkIn, reservation.checkOut),
-      channel: reservation.channel,
-      status: statusLabels[reservation.status],
-      amount: formatCurrency(reservation.totalAmount, reservation.currency)
-    })),
-    tasks: hotel.tasks.map((task) => ({
-      id: task.id,
-      title: task.title,
-      owner: task.owner,
-      due: new Intl.DateTimeFormat("tr-TR", {
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit"
-      }).format(task.dueAt),
-      priority: statusLabels[task.priority]
-    })),
-    channels: hotel.channels.map((channel) => ({
-      id: channel.id,
-      name: channel.name,
-      status: statusLabels[channel.status],
-      inventory: `${channel.inventory} oda`,
-      alert: channel.alert
-    }))
-  };
 }
 
 export async function getRoomOptions() {
@@ -198,18 +208,26 @@ export async function getRoomOptions() {
     }));
   }
 
-  const hotel = await prisma.hotel.findUnique({
-    where: { slug: "stayos-demo" },
-    include: {
-      rooms: {
-        select: {
-          id: true,
-          name: true
+  try {
+    const hotel = await prisma.hotel.findUnique({
+      where: { slug: "stayos-demo" },
+      include: {
+        rooms: {
+          select: {
+            id: true,
+            name: true
+          },
+          orderBy: { createdAt: "asc" }
         },
-        orderBy: { createdAt: "asc" }
       }
-    }
-  });
+    });
 
-  return hotel?.rooms ?? [];
+    return hotel?.rooms ?? [];
+  } catch (error) {
+    console.error("Room options read failed, falling back to demo data.", error);
+    return rooms.map((room) => ({
+      id: room.name,
+      name: room.name
+    }));
+  }
 }
