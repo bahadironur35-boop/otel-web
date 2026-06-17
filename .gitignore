@@ -1,0 +1,7 @@
+.npm-cache/
+.vercel/
+.vercel-data/
+.local-appdata/
+node_modules/
+dist/
+.DS_Store

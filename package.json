@@ -1,0 +1,19 @@
+{
+  "name": "stayos-hotel-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Otel web sitesi, operasyon paneli ve kanal entegrasyonu prototipi.",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "hotel",
+    "booking",
+    "channel-manager",
+    "hospitality",
+    "vercel"
+  ],
+  "author": "",
+  "license": "UNLICENSED"
+}
