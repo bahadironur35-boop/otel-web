@@ -4,8 +4,21 @@
   "private": true,
   "description": "Otel web sitesi, operasyon paneli ve kanal entegrasyonu prototipi.",
   "scripts": {
-    "dev": "npx serve .",
-    "start": "npx serve ."
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.2.9",
+    "react": "19.2.1",
+    "react-dom": "19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "typescript": "5.7.3"
   },
   "keywords": [
     "hotel",

@@ -5,9 +5,9 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 ## Mevcut sürüm
 
 - Misafir tarafı için tanıtım ve rezervasyon arama ekranı
-- Arka panel için rezervasyon, görev, otomasyon ve kanal uyarısı önizlemesi
+- `/admin` altında yönetim paneli, rezervasyon, oda, görev ve kanal ekranları
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
-- Vercel üzerinde statik site olarak yayınlanabilir yapı
+- Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
 ## Ürün yol haritası
 
@@ -18,10 +18,11 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 
 ## Yerelde çalıştırma
 
-Bu prototip statik dosyalardan oluşur. `index.html` dosyasını tarayıcıda açabilir veya basit bir yerel sunucu kullanabilirsiniz.
+Bağımlılıkları kurduktan sonra geliştirme sunucusunu başlatabilirsiniz.
 
 ```bash
-npm.cmd start
+npm.cmd install
+npm.cmd run dev
 ```
 
 ## GitHub'a gönderme
@@ -40,9 +41,9 @@ git push -u origin main
 1. GitHub'da repoyu oluşturun ve kodu gönderin.
 2. Vercel hesabınızda **Add New Project** seçin.
 3. GitHub reposunu seçin.
-4. Framework preset olarak **Other** seçilebilir.
-5. Build command boş bırakılabilir.
-6. Output directory olarak `.` kullanılır.
+4. Framework preset olarak **Next.js** seçilir.
+5. Build command `next build` olarak kalabilir.
+6. Output directory boş bırakılır.
 7. Deploy butonuna basılır.
 
 Vercel CLI kullanmak isterseniz:
