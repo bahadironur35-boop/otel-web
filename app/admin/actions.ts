@@ -59,6 +59,48 @@ export async function createReservation(formData: FormData) {
   redirect("/admin/reservations?created=1");
 }
 
+export async function confirmReservation(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/reservations?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/reservations?error=missing-fields");
+  }
+
+  await prisma.reservation.update({
+    where: { id },
+    data: { status: ReservationStatus.CONFIRMED }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/reservations");
+  redirect("/admin/reservations?confirmed=1");
+}
+
+export async function cancelReservation(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/reservations?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/reservations?error=missing-fields");
+  }
+
+  await prisma.reservation.update({
+    where: { id },
+    data: { status: ReservationStatus.CANCELLED }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/reservations");
+  redirect("/admin/reservations?cancelled=1");
+}
+
 export async function createRoom(formData: FormData) {
   if (!hasDatabase) {
     redirect("/admin/rooms?demo=1");

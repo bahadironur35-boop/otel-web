@@ -759,6 +759,12 @@ h3 {
   grid-template-columns: 1.1fr 1fr 1.15fr 0.8fr 0.9fr 0.8fr;
 }
 
+.table-head.reservations-head,
+.table-row.reservations-row {
+  min-width: 1060px;
+  grid-template-columns: 1.05fr 0.95fr 1.15fr 0.75fr 0.9fr 0.75fr 1fr;
+}
+
 .table-head {
   color: var(--muted);
   font-size: 0.84rem;
@@ -777,6 +783,57 @@ h3 {
   background: #e5f3ed;
   font-size: 0.84rem;
   font-weight: 900;
+}
+
+.status-pill {
+  display: inline-grid;
+  width: max-content;
+  min-height: 32px;
+  place-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 900;
+}
+
+.status-pill.info {
+  color: #24536f;
+  background: #e8f2f7;
+}
+
+.status-pill.success {
+  color: #236b35;
+  background: #e8f5ea;
+}
+
+.status-pill.warning {
+  color: #7b5a10;
+  background: #fff5d8;
+}
+
+.status-pill.danger {
+  color: #9f3f2f;
+  background: #fff0ed;
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.table-actions button {
+  min-height: 34px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.table-actions .danger-button {
+  background: #9f3f2f;
 }
 
 .room-card {

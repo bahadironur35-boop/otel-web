@@ -27,27 +27,33 @@ export const rooms = [
 
 export const reservations = [
   {
+    id: "demo-res-ayse",
     guest: "Ayşe Demir",
     room: "Deniz Suite",
     dates: "12-16 Temmuz 2026",
     channel: "Web sitesi",
     status: "Onaylandı",
+    statusKey: "CONFIRMED",
     amount: "₺27.600"
   },
   {
+    id: "demo-res-mert",
     guest: "Mert Kaya",
     room: "Aile Odası",
     dates: "18-21 Temmuz 2026",
     channel: "Booking",
     status: "Ödeme bekliyor",
+    statusKey: "PAYMENT_PENDING",
     amount: "₺16.200"
   },
   {
+    id: "demo-res-sofia",
     guest: "Sofia Miller",
     room: "Bahçe Deluxe",
     dates: "22-25 Temmuz 2026",
     channel: "Airbnb",
     status: "Yeni",
+    statusKey: "NEW",
     amount: "₺14.550"
   }
 ];
@@ -173,6 +179,7 @@ export async function getHotelData() {
         dates: formatDateRange(reservation.checkIn, reservation.checkOut),
         channel: reservation.channel,
         status: statusLabels[reservation.status],
+        statusKey: reservation.status,
         amount: formatCurrency(reservation.totalAmount, reservation.currency)
       })),
       tasks: hotel.tasks.map((task) => ({
