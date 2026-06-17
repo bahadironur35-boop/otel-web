@@ -688,7 +688,7 @@ h3 {
 }
 
 .task-row {
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
 }
 
 .task-row h3 {
@@ -697,6 +697,56 @@ h3 {
 
 .task-row p {
   margin: 4px 0 0;
+}
+
+.task-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.task-section-heading h3 {
+  margin: 0;
+}
+
+.task-section-heading span,
+.empty-state {
+  color: var(--muted);
+}
+
+.task-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.task-actions button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.task-actions .danger-button {
+  background: #9f3f2f;
+}
+
+.is-done {
+  opacity: 0.72;
+}
+
+.is-done h3 {
+  text-decoration: line-through;
+}
+
+.completed-card {
+  margin-top: 14px;
 }
 
 .table {

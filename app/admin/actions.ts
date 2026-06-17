@@ -119,3 +119,44 @@ export async function createTask(formData: FormData) {
   revalidatePath("/admin/tasks");
   redirect("/admin/tasks?created=1");
 }
+
+export async function completeTask(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/tasks?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/tasks?error=missing-fields");
+  }
+
+  await prisma.task.update({
+    where: { id },
+    data: { done: true }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/tasks");
+  redirect("/admin/tasks?completed=1");
+}
+
+export async function deleteTask(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/tasks?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/tasks?error=missing-fields");
+  }
+
+  await prisma.task.delete({
+    where: { id }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/tasks");
+  redirect("/admin/tasks?deleted=1");
+}

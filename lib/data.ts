@@ -54,22 +54,28 @@ export const reservations = [
 
 export const tasks = [
   {
+    id: "demo-task-maintenance",
     title: "203 numara bakım kontrolü",
     owner: "Teknik ekip",
     due: "Bugün 13:30",
-    priority: "Yüksek"
+    priority: "Yüksek",
+    done: false
   },
   {
+    id: "demo-task-checkin",
     title: "Deniz Suite check-in hazırlığı",
     owner: "Housekeeping",
     due: "Bugün 14:00",
-    priority: "Orta"
+    priority: "Orta",
+    done: false
   },
   {
+    id: "demo-task-vip",
     title: "VIP misafir karşılama notu",
     owner: "Ön büro",
     due: "Yarın 10:00",
-    priority: "Orta"
+    priority: "Orta",
+    done: false
   }
 ];
 
@@ -179,7 +185,8 @@ export async function getHotelData() {
           hour: "2-digit",
           minute: "2-digit"
         }).format(task.dueAt),
-        priority: statusLabels[task.priority]
+        priority: statusLabels[task.priority],
+        done: task.done
       })),
       channels: hotel.channels.map((channel) => ({
         id: channel.id,
@@ -218,7 +225,7 @@ export async function getRoomOptions() {
             name: true
           },
           orderBy: { createdAt: "asc" }
-        },
+        }
       }
     });
 
