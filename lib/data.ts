@@ -245,3 +245,44 @@ export async function getRoomOptions() {
     }));
   }
 }
+
+export async function getPublicRoomOptions() {
+  if (!hasDatabase) {
+    return rooms.map((room) => ({
+      id: room.name,
+      name: room.name,
+      price: room.price
+    }));
+  }
+
+  try {
+    const hotel = await prisma.hotel.findUnique({
+      where: { slug: "stayos-demo" },
+      include: {
+        rooms: {
+          where: {
+            inventory: {
+              gt: 0
+            }
+          },
+          orderBy: { nightlyRate: "asc" }
+        }
+      }
+    });
+
+    return (
+      hotel?.rooms.map((room) => ({
+        id: room.id,
+        name: room.name,
+        price: formatCurrency(room.nightlyRate, room.currency)
+      })) ?? []
+    );
+  } catch (error) {
+    console.error("Public room options read failed, falling back to demo data.", error);
+    return rooms.map((room) => ({
+      id: room.name,
+      name: room.name,
+      price: room.price
+    }));
+  }
+}
