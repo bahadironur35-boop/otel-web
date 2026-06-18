@@ -105,6 +105,9 @@ export default async function HomePage({
           {params.booking === "room-not-found" ? (
             <p className="notice danger">Seçilen oda tipi artık müsait değil. Lütfen başka bir oda seç.</p>
           ) : null}
+          {params.booking === "unavailable" ? (
+            <p className="notice danger">Bu oda tipi seçilen tarihlerde dolu. Başka tarih veya oda tipi seç.</p>
+          ) : null}
         </div>
         <form className="search-panel public-booking-form" action={createPublicReservation}>
           <label>

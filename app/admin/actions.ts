@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ReservationStatus, RoomStatus, TaskPriority } from "@prisma/client";
+import { getRoomAvailability, parseStayDates } from "@/lib/availability";
 import { hasDatabase, prisma } from "@/lib/prisma";
 
 async function getDemoHotelId() {
@@ -29,14 +30,26 @@ export async function createReservation(formData: FormData) {
   const roomTypeId = String(formData.get("roomTypeId") ?? "");
   const guestName = String(formData.get("guestName") ?? "").trim();
   const guestEmail = String(formData.get("guestEmail") ?? "").trim();
-  const checkIn = String(formData.get("checkIn") ?? "");
-  const checkOut = String(formData.get("checkOut") ?? "");
+  const checkInValue = String(formData.get("checkIn") ?? "");
+  const checkOutValue = String(formData.get("checkOut") ?? "");
   const channel = String(formData.get("channel") ?? "Web sitesi").trim();
   const totalAmount = Number(formData.get("totalAmount") ?? 0);
   const guests = Number(formData.get("guests") ?? 2);
 
-  if (!roomTypeId || !guestName || !checkIn || !checkOut || !totalAmount) {
+  if (!roomTypeId || !guestName || !checkInValue || !checkOutValue || !totalAmount) {
     redirect("/admin/reservations?error=missing-fields");
+  }
+
+  const { checkIn, checkOut, valid } = parseStayDates(checkInValue, checkOutValue);
+
+  if (!valid) {
+    redirect("/admin/reservations?error=invalid-dates");
+  }
+
+  const availability = await getRoomAvailability(roomTypeId, checkIn, checkOut);
+
+  if (!availability.available) {
+    redirect("/admin/reservations?error=unavailable");
   }
 
   await prisma.reservation.create({

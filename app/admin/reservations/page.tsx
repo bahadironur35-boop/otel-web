@@ -34,7 +34,15 @@ export default async function ReservationsPage({
       {params.created ? <p className="notice success">Rezervasyon oluşturuldu.</p> : null}
       {params.confirmed ? <p className="notice success">Rezervasyon onaylandı.</p> : null}
       {params.cancelled ? <p className="notice success">Rezervasyon iptal edildi.</p> : null}
-      {params.error ? <p className="notice danger">Zorunlu alanları kontrol et.</p> : null}
+      {params.error === "unavailable" ? (
+        <p className="notice danger">Seçilen oda tipi bu tarihlerde dolu.</p>
+      ) : null}
+      {params.error === "invalid-dates" ? (
+        <p className="notice danger">Çıkış tarihi giriş tarihinden sonra olmalı.</p>
+      ) : null}
+      {params.error === "missing-fields" ? (
+        <p className="notice danger">Zorunlu alanları kontrol et.</p>
+      ) : null}
 
       <form className="admin-form" action={createReservation}>
         <label>

@@ -3,6 +3,7 @@
 import { ReservationStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getRoomAvailability, parseStayDates } from "@/lib/availability";
 import { hasDatabase, prisma } from "@/lib/prisma";
 
 export async function createPublicReservation(formData: FormData) {
@@ -22,21 +23,21 @@ export async function createPublicReservation(formData: FormData) {
     redirect("/?booking=missing#demo");
   }
 
-  const checkIn = new Date(`${checkInValue}T12:00:00`);
-  const checkOut = new Date(`${checkOutValue}T10:00:00`);
-  const nights = Math.ceil((checkOut.getTime() - checkIn.getTime()) / 86_400_000);
+  const { checkIn, checkOut, nights, valid } = parseStayDates(checkInValue, checkOutValue);
 
-  if (!Number.isFinite(nights) || nights < 1 || guests < 1) {
+  if (!valid || guests < 1) {
     redirect("/?booking=invalid-dates#demo");
   }
 
-  const roomType = await prisma.roomType.findUnique({
-    where: { id: roomTypeId },
-    include: { hotel: true }
-  });
+  const availability = await getRoomAvailability(roomTypeId, checkIn, checkOut);
+  const roomType = availability.roomType;
 
   if (!roomType) {
     redirect("/?booking=room-not-found#demo");
+  }
+
+  if (!availability.available) {
+    redirect("/?booking=unavailable#demo");
   }
 
   await prisma.reservation.create({
