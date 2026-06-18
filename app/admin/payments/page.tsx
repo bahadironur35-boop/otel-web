@@ -30,8 +30,8 @@ export default async function PaymentsPage({
           <p className="section-kicker">Tahsilat merkezi</p>
           <h2>Tahsilat talepleri ve işlem durumları</h2>
         </div>
-        <Link className="admin-action secondary-action" href="/admin/payment-settings">
-          Sağlayıcı ayarları
+        <Link className="admin-action" href="/admin/payment-settings">
+          Ödeme Ayarları
         </Link>
       </div>
 
