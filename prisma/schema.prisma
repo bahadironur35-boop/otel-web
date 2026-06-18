@@ -34,18 +34,57 @@ enum ChannelStatus {
   ACTION_REQUIRED
 }
 
+enum ProviderType {
+  CHANNEX
+  HOTELRUNNER
+  SITEMINDER
+  DIRECT_OTA
+  MANUAL_CSV
+}
+
+enum IntegrationStatus {
+  NOT_CONFIGURED
+  CONNECTED
+  DEGRADED
+  DISCONNECTED
+}
+
+enum SyncDirection {
+  INBOUND
+  OUTBOUND
+  BIDIRECTIONAL
+}
+
+enum SyncState {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum ComplianceStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  READY
+  NOT_APPLICABLE
+}
+
 model Hotel {
-  id           String        @id @default(cuid())
+  id           String                @id @default(cuid())
   name         String
-  slug         String        @unique
+  slug         String                @unique
   city         String
   country      String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
   rooms        RoomType[]
   reservations Reservation[]
   tasks        Task[]
   channels     Channel[]
+  providers    IntegrationProvider[]
+  connections  ChannelConnection[]
+  roomMappings RoomMapping[]
+  syncLogs     SyncLog[]
+  compliance   ComplianceItem[]
 }
 
 model RoomType {
@@ -61,6 +100,7 @@ model RoomType {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   reservations Reservation[]
+  roomMappings RoomMapping[]
 }
 
 model Reservation {
@@ -108,4 +148,111 @@ model Channel {
   updatedAt DateTime      @updatedAt
 
   @@unique([hotelId, name])
+}
+
+model IntegrationProvider {
+  id                String              @id @default(cuid())
+  hotelId           String
+  hotel             Hotel               @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  type              ProviderType
+  name              String
+  status            IntegrationStatus   @default(NOT_CONFIGURED)
+  externalAccountId String?
+  lastTestedAt      DateTime?
+  notes             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  connections       ChannelConnection[]
+  roomMappings      RoomMapping[]
+  syncLogs          SyncLog[]
+
+  @@unique([hotelId, type])
+}
+
+model ChannelCatalog {
+  id                String              @id @default(cuid())
+  code              String              @unique
+  name              String
+  market            String
+  category          String
+  defaultCurrency   String?
+  supportsInventory Boolean             @default(true)
+  supportsRates     Boolean             @default(true)
+  supportsBookings  Boolean             @default(true)
+  active            Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  connections       ChannelConnection[]
+}
+
+model ChannelConnection {
+  id                String              @id @default(cuid())
+  hotelId           String
+  hotel             Hotel               @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  providerId        String
+  provider          IntegrationProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  channelCatalogId  String
+  channelCatalog    ChannelCatalog      @relation(fields: [channelCatalogId], references: [id], onDelete: Restrict)
+  externalChannelId String?
+  enabled           Boolean             @default(false)
+  status            IntegrationStatus   @default(NOT_CONFIGURED)
+  lastSyncedAt      DateTime?
+  errorMessage      String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  syncLogs          SyncLog[]
+
+  @@unique([hotelId, channelCatalogId])
+}
+
+model RoomMapping {
+  id                 String              @id @default(cuid())
+  hotelId            String
+  hotel              Hotel               @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  providerId         String
+  provider           IntegrationProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  roomTypeId         String
+  roomType           RoomType            @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  externalRoomTypeId String
+  externalRatePlanId String?
+  active             Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+
+  @@unique([providerId, roomTypeId])
+}
+
+model SyncLog {
+  id                  String               @id @default(cuid())
+  hotelId             String
+  hotel               Hotel                @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  providerId          String?
+  provider            IntegrationProvider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  channelConnectionId String?
+  channelConnection   ChannelConnection?   @relation(fields: [channelConnectionId], references: [id], onDelete: SetNull)
+  direction           SyncDirection
+  resource            String
+  state               SyncState
+  recordsCount        Int                  @default(0)
+  message             String
+  externalReference   String?
+  createdAt           DateTime             @default(now())
+
+  @@index([hotelId, createdAt])
+}
+
+model ComplianceItem {
+  id        String           @id @default(cuid())
+  hotelId   String
+  hotel     Hotel            @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  code      String
+  title     String
+  category  String
+  status    ComplianceStatus @default(NOT_STARTED)
+  notes     String?
+  dueDate   DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([hotelId, code])
 }

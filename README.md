@@ -90,6 +90,22 @@ https://alan-adiniz.com/api/integrations/channex/webhook?secret=CHANNEX_WEBHOOK_
 
 Admin kanal ekranından bağlantı testi yapılabilir ve önümüzdeki 30 günün müsaitlik değerleri Channex'e gönderilebilir.
 
+## Sağlayıcıdan bağımsız entegrasyon modeli
+
+Türkiye kanal kataloğu, sağlayıcı bağlantıları, oda eşleştirmeleri, senkronizasyon günlüğü ve uyumluluk kontrol listesi için Supabase SQL Editor'da sırasıyla şunları çalıştırın:
+
+```text
+supabase/integrations-migration.sql
+supabase/integrations-seed.sql
+```
+
+Sonrasında:
+
+- `/admin/channels`: sağlayıcı, kanal bağlantısı, oda mapping ve sync log yönetimi
+- `/admin/compliance`: Türkiye yasal/operasyonel uyumluluk takibi
+
+Ayrıntılı mimari: `docs/turkiye-entegrasyon-mimarisi.md`
+
 ## GitHub'a gönderme
 
 ```bash

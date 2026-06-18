@@ -9,7 +9,8 @@ const navItems = [
   ["Rezervasyonlar", "/admin/reservations"],
   ["Odalar", "/admin/rooms"],
   ["Görevler", "/admin/tasks"],
-  ["Kanallar", "/admin/channels"]
+  ["Kanallar", "/admin/channels"],
+  ["Uyumluluk", "/admin/compliance"]
 ];
 
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {

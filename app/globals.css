@@ -1248,6 +1248,238 @@ h3 {
   opacity: 0.48;
 }
 
+.workspace-section {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(19, 32, 31, 0.05);
+}
+
+.workspace-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.workspace-heading h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.workspace-heading > span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.provider-card {
+  box-shadow: none;
+}
+
+.provider-card > p {
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.connection-list,
+.mapping-list,
+.sync-log-list,
+.compliance-list {
+  display: grid;
+  gap: 8px;
+}
+
+.connection-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.45fr) minmax(150px, 0.9fr) minmax(140px, 0.9fr) auto auto auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fafbf9;
+}
+
+.connection-row > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.connection-row > div:first-child span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.connection-row select,
+.connection-row > input,
+.mapping-form input,
+.mapping-form select,
+.compliance-row input,
+.compliance-row select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.connection-row button,
+.mapping-form button,
+.mapping-row button,
+.compliance-row button {
+  min-height: 40px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.connection-row button:disabled,
+.mapping-form button:disabled,
+.compliance-row button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.connection-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mapping-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+
+.mapping-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mapping-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(140px, 0.8fr) minmax(140px, 0.8fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.mapping-row > div {
+  display: grid;
+}
+
+.mapping-row span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.mapping-row code {
+  overflow: hidden;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: var(--teal-dark);
+  background: #edf5f1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mapping-row button {
+  color: #9f3f2f;
+  background: #fff0ed;
+}
+
+.sync-log-row {
+  display: grid;
+  grid-template-columns: auto minmax(180px, 0.8fr) minmax(260px, 1.4fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.sync-log-row p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.sync-log-row > span:nth-child(3),
+.sync-log-row time {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.compliance-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.compliance-summary article {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.compliance-summary strong {
+  display: block;
+  font-size: 2rem;
+}
+
+.compliance-summary span {
+  color: var(--muted);
+}
+
+.compliance-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.4fr) auto minmax(150px, 0.7fr) minmax(220px, 1.2fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.compliance-row > div {
+  display: grid;
+  gap: 3px;
+}
+
+.compliance-row > div span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -1387,8 +1619,22 @@ h3 {
   .room-edit-grid,
   .channel-create-form,
   .reservation-filters,
-  .reservation-detail-grid {
+  .reservation-detail-grid,
+  .provider-grid,
+  .compliance-summary {
     grid-template-columns: 1fr;
+  }
+
+  .connection-row,
+  .mapping-form,
+  .mapping-row,
+  .sync-log-row,
+  .compliance-row {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-heading {
+    align-items: start;
   }
 
   .booking-status-message {

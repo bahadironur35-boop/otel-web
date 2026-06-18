@@ -2,7 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ChannelStatus, ReservationStatus, RoomStatus, TaskPriority } from "@prisma/client";
+import {
+  ChannelStatus,
+  ComplianceStatus,
+  IntegrationStatus,
+  ReservationStatus,
+  RoomStatus,
+  SyncDirection,
+  SyncState,
+  TaskPriority
+} from "@prisma/client";
 import { getRoomAvailability, parseStayDates } from "@/lib/availability";
 import { testChannexConnection } from "@/lib/channex";
 import { syncInventoryToChannex } from "@/lib/channex-sync";
@@ -422,4 +431,180 @@ export async function syncChannexInventoryAction() {
   }
 
   redirect(`/admin/channels?channex=synced&values=${result.values}&rooms=${result.roomTypes}`);
+}
+
+export async function updateIntegrationProvider(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? IntegrationStatus.NOT_CONFIGURED) as IntegrationStatus;
+  const externalAccountId = String(formData.get("externalAccountId") ?? "").trim();
+  const notes = String(formData.get("notes") ?? "").trim();
+
+  if (!id) {
+    redirect("/admin/channels?workspace=provider-error");
+  }
+
+  await prisma.integrationProvider.update({
+    where: { id },
+    data: {
+      status,
+      externalAccountId: externalAccountId || null,
+      notes: notes || null,
+      lastTestedAt: status === IntegrationStatus.CONNECTED ? new Date() : undefined
+    }
+  });
+
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?workspace=provider-updated");
+}
+
+export async function updateChannelConnection(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const providerId = String(formData.get("providerId") ?? "");
+  const externalChannelId = String(formData.get("externalChannelId") ?? "").trim();
+  const enabled = formData.get("enabled") === "on";
+
+  if (!id || !providerId) {
+    redirect("/admin/channels?workspace=connection-error");
+  }
+
+  await prisma.channelConnection.update({
+    where: { id },
+    data: {
+      providerId,
+      externalChannelId: externalChannelId || null,
+      enabled,
+      status: enabled ? IntegrationStatus.DEGRADED : IntegrationStatus.NOT_CONFIGURED,
+      errorMessage: enabled ? "İlk başarılı senkronizasyon bekleniyor" : null
+    }
+  });
+
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?workspace=connection-updated");
+}
+
+export async function saveRoomMapping(formData: FormData) {
+  const hotelId = await getDemoHotelId();
+  const providerId = String(formData.get("providerId") ?? "");
+  const roomTypeId = String(formData.get("roomTypeId") ?? "");
+  const externalRoomTypeId = String(formData.get("externalRoomTypeId") ?? "").trim();
+  const externalRatePlanId = String(formData.get("externalRatePlanId") ?? "").trim();
+
+  if (!providerId || !roomTypeId || !externalRoomTypeId) {
+    redirect("/admin/channels?workspace=mapping-error");
+  }
+
+  await prisma.roomMapping.upsert({
+    where: {
+      providerId_roomTypeId: {
+        providerId,
+        roomTypeId
+      }
+    },
+    update: {
+      externalRoomTypeId,
+      externalRatePlanId: externalRatePlanId || null,
+      active: true
+    },
+    create: {
+      hotelId,
+      providerId,
+      roomTypeId,
+      externalRoomTypeId,
+      externalRatePlanId: externalRatePlanId || null
+    }
+  });
+
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?workspace=mapping-saved");
+}
+
+export async function deleteRoomMapping(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/channels?workspace=mapping-error");
+  }
+
+  await prisma.roomMapping.delete({
+    where: { id }
+  });
+
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?workspace=mapping-deleted");
+}
+
+export async function runConnectionSync(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/channels?workspace=sync-error");
+  }
+
+  const connection = await prisma.channelConnection.findUnique({
+    where: { id },
+    include: { channelCatalog: true }
+  });
+
+  if (!connection) {
+    redirect("/admin/channels?workspace=sync-error");
+  }
+
+  const mappingCount = await prisma.roomMapping.count({
+    where: {
+      providerId: connection.providerId,
+      active: true
+    }
+  });
+
+  const success = connection.enabled && mappingCount > 0;
+  const message = success
+    ? `${mappingCount} oda eşleştirmesi doğrulandı. Gerçek API erişimi geldiğinde veri gönderimi bu noktadan çalışacak.`
+    : "Senkronizasyon için kanal etkin olmalı ve en az bir oda eşleştirmesi bulunmalı.";
+
+  await prisma.$transaction([
+    prisma.channelConnection.update({
+      where: { id },
+      data: {
+        status: success ? IntegrationStatus.CONNECTED : IntegrationStatus.DEGRADED,
+        lastSyncedAt: success ? new Date() : undefined,
+        errorMessage: success ? null : message
+      }
+    }),
+    prisma.syncLog.create({
+      data: {
+        hotelId: connection.hotelId,
+        providerId: connection.providerId,
+        channelConnectionId: connection.id,
+        direction: SyncDirection.BIDIRECTIONAL,
+        resource: "INVENTORY_RATES_BOOKINGS",
+        state: success ? SyncState.SUCCESS : SyncState.FAILED,
+        recordsCount: mappingCount,
+        message
+      }
+    })
+  ]);
+
+  revalidatePath("/admin/channels");
+  redirect(`/admin/channels?workspace=${success ? "sync-success" : "sync-error"}`);
+}
+
+export async function updateComplianceItem(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? ComplianceStatus.NOT_STARTED) as ComplianceStatus;
+  const notes = String(formData.get("notes") ?? "").trim();
+
+  if (!id) {
+    redirect("/admin/compliance?status=error");
+  }
+
+  await prisma.complianceItem.update({
+    where: { id },
+    data: {
+      status,
+      notes: notes || null
+    }
+  });
+
+  revalidatePath("/admin/compliance");
+  redirect("/admin/compliance?status=updated");
 }
