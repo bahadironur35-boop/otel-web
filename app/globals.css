@@ -607,6 +607,12 @@ h3 {
   font-size: 2rem;
 }
 
+.admin-metrics small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+}
+
 .admin-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -617,6 +623,24 @@ h3 {
 
 .admin-card h3 {
   margin-top: 0;
+}
+
+.card-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.card-heading-row h3 {
+  margin: 0;
+}
+
+.card-heading-row a {
+  color: var(--teal);
+  font-size: 0.86rem;
+  font-weight: 900;
 }
 
 .admin-form {
