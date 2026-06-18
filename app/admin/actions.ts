@@ -132,6 +132,65 @@ export async function createRoom(formData: FormData) {
   redirect("/admin/rooms?created=1");
 }
 
+export async function updateRoom(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/rooms?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const capacity = String(formData.get("capacity") ?? "").trim();
+  const nightlyRate = Number(formData.get("nightlyRate") ?? 0);
+  const inventory = Number(formData.get("inventory") ?? 0);
+  const status = String(formData.get("status") ?? RoomStatus.READY) as RoomStatus;
+
+  if (!id || !name || !capacity || nightlyRate < 1 || inventory < 0) {
+    redirect("/admin/rooms?error=missing-fields");
+  }
+
+  await prisma.roomType.update({
+    where: { id },
+    data: {
+      name,
+      capacity,
+      nightlyRate,
+      inventory,
+      status
+    }
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/rooms");
+  revalidatePath("/admin/reservations");
+  redirect("/admin/rooms?updated=1");
+}
+
+export async function deactivateRoom(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/rooms?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/rooms?error=missing-fields");
+  }
+
+  await prisma.roomType.update({
+    where: { id },
+    data: {
+      inventory: 0,
+      status: RoomStatus.MAINTENANCE
+    }
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/rooms");
+  redirect("/admin/rooms?deactivated=1");
+}
+
 export async function createTask(formData: FormData) {
   if (!hasDatabase) {
     redirect("/admin/tasks?demo=1");

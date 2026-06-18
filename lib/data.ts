@@ -3,25 +3,37 @@ import { hasDatabase, prisma } from "@/lib/prisma";
 
 export const rooms = [
   {
+    id: "demo-room-deniz",
     name: "Deniz Suite",
     price: "₺6.900",
+    nightlyRate: 6900,
     status: "Hazır",
+    statusKey: "READY",
     occupancy: "2 yetişkin",
-    source: "Web sitesi"
+    source: "Web sitesi",
+    inventory: 8
   },
   {
+    id: "demo-room-aile",
     name: "Aile Odası",
     price: "₺5.400",
+    nightlyRate: 5400,
     status: "Ekstra yatak",
+    statusKey: "EXTRA_BED",
     occupancy: "2 yetişkin, 1 çocuk",
-    source: "Booking"
+    source: "Booking",
+    inventory: 12
   },
   {
+    id: "demo-room-bahce",
     name: "Bahçe Deluxe",
     price: "₺4.850",
+    nightlyRate: 4850,
     status: "Temizlikte",
+    statusKey: "CLEANING",
     occupancy: "2 yetişkin",
-    source: "Expedia"
+    source: "Expedia",
+    inventory: 18
   }
 ];
 
@@ -167,7 +179,9 @@ export async function getHotelData() {
         id: room.id,
         name: room.name,
         price: formatCurrency(room.nightlyRate, room.currency),
+        nightlyRate: room.nightlyRate,
         status: statusLabels[room.status],
+        statusKey: room.status,
         occupancy: room.capacity,
         source: "Admin panel",
         inventory: room.inventory

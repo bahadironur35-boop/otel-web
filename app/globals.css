@@ -861,6 +861,73 @@ h3 {
   font-size: 1.8rem;
 }
 
+.room-management-grid {
+  align-items: start;
+}
+
+.room-editor {
+  min-height: 0;
+}
+
+.room-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.room-edit-form {
+  display: grid;
+  gap: 12px;
+}
+
+.room-edit-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.room-edit-form input,
+.room-edit-form select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.room-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.room-edit-form button,
+.room-deactivate-button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.room-edit-form button {
+  color: #fff;
+  background: var(--teal);
+}
+
+.room-deactivate-button {
+  width: 100%;
+  margin-top: 10px;
+  color: #9f3f2f;
+  background: #fff0ed;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -996,7 +1063,8 @@ h3 {
   .admin-grid,
   .admin-grid.three,
   .admin-form,
-  .admin-form.compact {
+  .admin-form.compact,
+  .room-edit-grid {
     grid-template-columns: 1fr;
   }
 
