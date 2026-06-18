@@ -1530,6 +1530,142 @@ h3 {
   opacity: 0.5;
 }
 
+.touch-payment-form {
+  display: grid;
+  gap: 18px;
+}
+
+.touch-reservation-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.touch-reservation-card {
+  min-height: 142px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+  touch-action: manipulation;
+}
+
+.touch-reservation-card:hover:not(:disabled) {
+  border-color: #9cc9c1;
+  transform: translateY(-1px);
+}
+
+.touch-reservation-card.is-selected {
+  border-color: var(--teal);
+  background: #eff8f4;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
+}
+
+.touch-reservation-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.touch-card-room {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.touch-reservation-card > strong {
+  font-size: 1rem;
+}
+
+.touch-card-amount {
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.touch-card-status {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #7b5a10;
+  background: #fff5d8;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.touch-card-status.paid {
+  color: #236b35;
+  background: #e8f5ea;
+}
+
+.payment-control-panel {
+  display: grid;
+  grid-template-columns: minmax(210px, 1.2fr) minmax(150px, 0.7fr) minmax(190px, 1fr) minmax(180px, 0.8fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.payment-control-panel label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.payment-control-panel input,
+.payment-control-panel select {
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.payment-control-panel > button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.payment-control-panel > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.selected-payment-summary {
+  display: grid;
+  gap: 5px;
+  align-self: center;
+}
+
+.selected-payment-summary span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.selected-payment-summary strong {
+  line-height: 1.25;
+}
+
 .payment-list {
   display: grid;
   gap: 10px;
@@ -1784,6 +1920,14 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .touch-reservation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .payment-control-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .workspace-heading {
     align-items: start;
   }
@@ -1799,6 +1943,11 @@ h3 {
 
   .payments-topline h2 {
     white-space: normal;
+  }
+
+  .touch-reservation-grid,
+  .payment-control-panel {
+    grid-template-columns: 1fr;
   }
 
   .integration-control-bar,

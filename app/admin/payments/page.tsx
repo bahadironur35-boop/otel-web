@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { createPaymentRequest, updatePaymentStatus } from "@/app/admin/actions";
+import { updatePaymentStatus } from "@/app/admin/actions";
+import { PaymentRequestPanel } from "@/components/payment-request-panel";
 import { getConfiguredPaymentProviders } from "@/lib/payment-providers";
 import { getPaymentWorkspace } from "@/lib/payments";
 
@@ -27,7 +28,7 @@ export default async function PaymentsPage({
       <div className="admin-topline payments-topline">
         <div>
           <p className="section-kicker">Tahsilat merkezi</p>
-          <h2>Ödeme talepleri ve işlem durumları</h2>
+          <h2>Tahsilat talepleri ve işlem durumları</h2>
         </div>
         <Link className="admin-action secondary-action" href="/admin/payment-settings">
           Sağlayıcı ayarları
@@ -37,9 +38,9 @@ export default async function PaymentsPage({
       {!workspace.schemaReady ? (
         <p className="notice danger">Ödeme tablosu henüz kurulmadı. Supabase'de `supabase/payments-migration.sql` çalıştırılmalı.</p>
       ) : null}
-      {params.result === "created" ? <p className="notice success">Ödeme talebi oluşturuldu.</p> : null}
-      {params.result === "updated" ? <p className="notice success">Ödeme durumu güncellendi.</p> : null}
-      {params.result === "error" ? <p className="notice danger">Ödeme işlemi tamamlanamadı.</p> : null}
+      {params.result === "created" ? <p className="notice success">Tahsilat talebi oluşturuldu.</p> : null}
+      {params.result === "updated" ? <p className="notice success">Tahsilat durumu güncellendi.</p> : null}
+      {params.result === "error" ? <p className="notice danger">Tahsilat işlemi tamamlanamadı.</p> : null}
       {params.result === "provider-not-configured" ? (
         <p className="notice danger">Seçilen ödeme sağlayıcısı henüz yapılandırılmadı.</p>
       ) : null}
@@ -47,48 +48,23 @@ export default async function PaymentsPage({
       <section className="workspace-section">
         <div className="workspace-heading">
           <div>
-            <p className="section-kicker">Yeni ödeme</p>
-            <h3>Rezervasyon için ödeme talebi oluştur</h3>
+            <p className="section-kicker">Yeni tahsilat</p>
+            <h3>Rezervasyona dokunarak seçim yapın</h3>
           </div>
+          <span>{workspace.reservations.length} rezervasyon</span>
         </div>
-        <form className="payment-create-form" action={createPaymentRequest}>
-          <label>
-            Rezervasyon
-            <select name="reservationId" required disabled={!workspace.schemaReady}>
-              {workspace.reservations.map((reservation) => (
-                <option key={reservation.id} value={reservation.id}>
-                  {reservation.guestName} · {reservation.roomName} · {reservation.amountLabel}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Sağlayıcı
-            <select name="provider" defaultValue={configuredProviders[0]?.id} disabled={!workspace.schemaReady}>
-              {configuredProviders.map((provider) => (
-                <option key={provider.id} value={provider.id}>{provider.name}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Ödeme bağlantısı
-            <input name="paymentLink" type="url" placeholder="https://..." disabled={!workspace.schemaReady} />
-          </label>
-          <label>
-            Son kullanım
-            <input name="expiresAt" type="datetime-local" disabled={!workspace.schemaReady} />
-          </label>
-          <button type="submit" disabled={!workspace.schemaReady || !workspace.reservations.length || !configuredProviders.length}>
-            Talep oluştur
-          </button>
-        </form>
+        <PaymentRequestPanel
+          reservations={workspace.reservations}
+          providers={configuredProviders.map((provider) => ({ id: provider.id, name: provider.name }))}
+          schemaReady={workspace.schemaReady}
+        />
       </section>
 
       <section className="workspace-section">
         <div className="workspace-heading">
           <div>
             <p className="section-kicker">İşlemler</p>
-            <h3>Ödeme geçmişi</h3>
+            <h3>Tahsilat geçmişi</h3>
           </div>
           <span>{workspace.payments.length} işlem</span>
         </div>
@@ -129,7 +105,7 @@ export default async function PaymentsPage({
               </form>
             </article>
           ))}
-          {!workspace.payments.length ? <p className="empty-state">Henüz ödeme işlemi oluşturulmadı.</p> : null}
+          {!workspace.payments.length ? <p className="empty-state">Henüz tahsilat işlemi oluşturulmadı.</p> : null}
         </div>
       </section>
     </>
