@@ -46,6 +46,8 @@ export const reservations = [
     channel: "Web sitesi",
     status: "Onaylandı",
     statusKey: "CONFIRMED",
+    email: "ayse@example.com",
+    notes: null,
     amount: "₺27.600"
   },
   {
@@ -56,6 +58,8 @@ export const reservations = [
     channel: "Booking",
     status: "Ödeme bekliyor",
     statusKey: "PAYMENT_PENDING",
+    email: "mert@example.com",
+    notes: null,
     amount: "₺16.200"
   },
   {
@@ -66,6 +70,8 @@ export const reservations = [
     channel: "Airbnb",
     status: "Yeni",
     statusKey: "NEW",
+    email: "sofia@example.com",
+    notes: null,
     amount: "₺14.550"
   }
 ];
@@ -206,6 +212,8 @@ export async function getHotelData() {
         channel: reservation.channel,
         status: statusLabels[reservation.status],
         statusKey: reservation.status,
+        email: reservation.guestEmail,
+        notes: reservation.notes,
         amount: formatCurrency(reservation.totalAmount, reservation.currency)
       })),
       tasks: hotel.tasks.map((task) => ({

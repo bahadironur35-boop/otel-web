@@ -945,6 +945,136 @@ h3 {
   background: #9f3f2f;
 }
 
+.table-detail-link {
+  display: inline-grid;
+  min-height: 34px;
+  place-items: center;
+  padding: 0 11px;
+  border-radius: 8px;
+  color: var(--teal-dark);
+  background: #e5f3ed;
+  font-weight: 900;
+}
+
+.reservation-filters {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) minmax(150px, 1fr) minmax(150px, 1fr) auto auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.reservation-filters label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.reservation-filters input,
+.reservation-filters select {
+  min-height: 42px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.reservation-filters button,
+.reservation-filters > a {
+  display: inline-grid;
+  min-height: 42px;
+  place-items: center;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.reservation-filters button {
+  color: #fff;
+  background: var(--teal);
+}
+
+.reservation-filters > a {
+  color: var(--ink);
+  background: #edf1ed;
+}
+
+.list-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.list-summary strong {
+  color: var(--ink);
+}
+
+.reservation-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.detail-card dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.detail-card dl div {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.detail-card dt {
+  color: var(--muted);
+}
+
+.detail-card dd {
+  margin: 0;
+  font-weight: 800;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.detail-actions button {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.detail-actions .danger-button {
+  background: #9f3f2f;
+}
+
+.secondary-action {
+  color: var(--ink);
+  background: #e7ece8;
+}
+
 .room-card {
   min-height: 220px;
 }
@@ -1255,7 +1385,9 @@ h3 {
   .admin-form,
   .admin-form.compact,
   .room-edit-grid,
-  .channel-create-form {
+  .channel-create-form,
+  .reservation-filters,
+  .reservation-detail-grid {
     grid-template-columns: 1fr;
   }
 
