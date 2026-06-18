@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ChannelStatus, ReservationStatus, RoomStatus, TaskPriority } from "@prisma/client";
 import { getRoomAvailability, parseStayDates } from "@/lib/availability";
+import { testChannexConnection } from "@/lib/channex";
+import { syncInventoryToChannex } from "@/lib/channex-sync";
 import { hasDatabase, prisma } from "@/lib/prisma";
 
 async function getDemoHotelId() {
@@ -393,4 +395,31 @@ export async function deactivateChannel(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/channels");
   redirect("/admin/channels?deactivated=1");
+}
+
+export async function testChannexAction() {
+  let propertyTitle: string;
+
+  try {
+    const property = await testChannexConnection();
+    propertyTitle = property.attributes.title;
+  } catch (error) {
+    console.error("Channex connection test failed.", error);
+    redirect("/admin/channels?channex=failed");
+  }
+
+  redirect(`/admin/channels?channex=connected&property=${encodeURIComponent(propertyTitle)}`);
+}
+
+export async function syncChannexInventoryAction() {
+  let result: Awaited<ReturnType<typeof syncInventoryToChannex>>;
+
+  try {
+    result = await syncInventoryToChannex(30);
+  } catch (error) {
+    console.error("Channex inventory sync failed.", error);
+    redirect("/admin/channels?channex=sync-failed");
+  }
+
+  redirect(`/admin/channels?channex=synced&values=${result.values}&rooms=${result.roomTypes}`);
 }

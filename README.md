@@ -10,6 +10,7 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 - Rezervasyon, oda tipi ve görev oluşturma formları
 - Admin panel için e-posta/şifre girişi ve oturum koruması
 - Yeni rezervasyonda yönetici ve misafir e-posta bildirimi
+- Channex staging bağlantısı, stok senkronizasyonu ve webhook giriş noktası
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
@@ -69,6 +70,26 @@ RESERVATION_NOTIFICATION_EMAIL="hotel-manager@example.com"
 
 Gönderen adresindeki alan adının Resend üzerinde doğrulanmış olması gerekir. E-posta ayarları yoksa rezervasyon kaydı çalışmaya devam eder, yalnızca bildirim atlanır.
 
+## Channex bağlantısı
+
+OTA bağlantıları için ilk entegrasyon katmanı Channex staging API ile hazırlanmıştır:
+
+```env
+CHANNEX_API_KEY="staging-api-key"
+CHANNEX_PROPERTY_ID="property-id"
+CHANNEX_BASE_URL="https://staging.channex.io/api/v.1"
+CHANNEX_WEBHOOK_SECRET="uzun-rastgele-değer"
+CHANNEX_ROOM_MAPPING="{\"stayos-room-id\":\"channex-room-type-id\"}"
+```
+
+Webhook adresi:
+
+```text
+https://alan-adiniz.com/api/integrations/channex/webhook?secret=CHANNEX_WEBHOOK_SECRET
+```
+
+Admin kanal ekranından bağlantı testi yapılabilir ve önümüzdeki 30 günün müsaitlik değerleri Channex'e gönderilebilir.
+
 ## GitHub'a gönderme
 
 ```bash
@@ -91,6 +112,7 @@ git push -u origin main
 7. Gerçek veri için Vercel Environment Variables alanına `DATABASE_URL` ve `DIRECT_URL` eklenir.
 8. Admin girişi için `ADMIN_EMAIL`, `ADMIN_PASSWORD` ve `SESSION_SECRET` eklenir.
 9. E-posta için `RESEND_API_KEY`, `RESEND_FROM_EMAIL` ve `RESERVATION_NOTIFICATION_EMAIL` eklenir.
+10. Channex staging erişimi alındığında `CHANNEX_*` değişkenleri eklenir.
 7. Deploy butonuna basılır.
 
 Vercel CLI kullanmak isterseniz:

@@ -2,8 +2,11 @@ import {
   createChannel,
   deactivateChannel,
   syncChannel,
+  syncChannexInventoryAction,
+  testChannexAction,
   updateChannel
 } from "@/app/admin/actions";
+import { isChannexConfigured } from "@/lib/channex";
 import { getHotelData } from "@/lib/data";
 
 export default async function ChannelsPage({
@@ -11,14 +14,19 @@ export default async function ChannelsPage({
 }: {
   searchParams: Promise<{
     created?: string;
+    channex?: string;
     deactivated?: string;
     demo?: string;
     error?: string;
     synced?: string;
     updated?: string;
+    property?: string;
+    rooms?: string;
+    values?: string;
   }>;
 }) {
   const [{ channels }, params] = await Promise.all([getHotelData(), searchParams]);
+  const channexConfigured = isChannexConfigured();
 
   return (
     <>
@@ -35,6 +43,38 @@ export default async function ChannelsPage({
       {params.synced ? <p className="notice success">Kanal senkronize edildi.</p> : null}
       {params.deactivated ? <p className="notice success">Kanal satışa kapatıldı.</p> : null}
       {params.error ? <p className="notice danger">Kanal bilgilerini kontrol edin.</p> : null}
+      {params.channex === "connected" ? (
+        <p className="notice success">Channex bağlantısı doğrulandı: {params.property}</p>
+      ) : null}
+      {params.channex === "synced" ? (
+        <p className="notice success">
+          Channex senkronizasyonu tamamlandı: {params.rooms} oda tipi, {params.values} stok değeri.
+        </p>
+      ) : null}
+      {params.channex === "failed" ? (
+        <p className="notice danger">Channex bağlantısı kurulamadı. API anahtarı ve property ID değerlerini kontrol edin.</p>
+      ) : null}
+      {params.channex === "sync-failed" ? (
+        <p className="notice danger">Channex stok senkronizasyonu başarısız. Oda eşleştirmelerini kontrol edin.</p>
+      ) : null}
+
+      <section className="integration-control-bar">
+        <div>
+          <span className={`integration-dot ${channexConfigured ? "online" : ""}`} />
+          <div>
+            <strong>Channex bağlantısı</strong>
+            <p>{channexConfigured ? "API ayarları mevcut" : "Henüz yapılandırılmadı"}</p>
+          </div>
+        </div>
+        <div className="integration-control-actions">
+          <form action={testChannexAction}>
+            <button type="submit" disabled={!channexConfigured}>Bağlantıyı test et</button>
+          </form>
+          <form action={syncChannexInventoryAction}>
+            <button type="submit" disabled={!channexConfigured}>30 günü senkronize et</button>
+          </form>
+        </div>
+      </section>
 
       <form className="admin-form channel-create-form" action={createChannel}>
         <label>

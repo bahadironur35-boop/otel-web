@@ -1058,6 +1058,66 @@ h3 {
   background: #fff0ed;
 }
 
+.integration-control-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(19, 32, 31, 0.06);
+}
+
+.integration-control-bar > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.integration-control-bar p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.integration-dot {
+  width: 12px;
+  height: 12px;
+  flex: 0 0 12px;
+  border-radius: 50%;
+  background: #aeb8b5;
+  box-shadow: 0 0 0 4px rgba(174, 184, 181, 0.18);
+}
+
+.integration-dot.online {
+  background: #2b9b62;
+  box-shadow: 0 0 0 4px rgba(43, 155, 98, 0.16);
+}
+
+.integration-control-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.integration-control-actions button {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.integration-control-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -1205,6 +1265,12 @@ h3 {
   }
 
   .channel-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .integration-control-bar,
+  .integration-control-actions {
+    display: grid;
     grid-template-columns: 1fr;
   }
 
