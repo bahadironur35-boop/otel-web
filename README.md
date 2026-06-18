@@ -106,6 +106,38 @@ Sonrasında:
 
 Ayrıntılı mimari: `docs/turkiye-entegrasyon-mimarisi.md`
 
+## Ödeme altyapısı
+
+Sağlayıcıdan bağımsız ödeme kayıtları için Supabase SQL Editor'da:
+
+```text
+supabase/payments-migration.sql
+```
+
+çalıştırın. Ardından `/admin/payments` ekranından manuel ödeme bağlantısı ve durum takibi kullanılabilir.
+
+Sandbox API erişimi geldiğinde şu değişkenler kullanılır:
+
+```env
+PAYMENT_WEBHOOK_SECRET="uzun-rastgele-değer"
+IYZICO_API_KEY=""
+IYZICO_SECRET_KEY=""
+IYZICO_BASE_URL="https://sandbox-api.iyzipay.com"
+PAYTR_MERCHANT_ID=""
+PAYTR_MERCHANT_KEY=""
+PAYTR_MERCHANT_SALT=""
+```
+
+Webhook adresleri:
+
+```text
+/api/payments/webhook/iyzico
+/api/payments/webhook/paytr
+/api/payments/webhook/bank-pos
+```
+
+Ayrıntılı mimari: `docs/odeme-mimarisi.md`
+
 ## GitHub'a gönderme
 
 ```bash

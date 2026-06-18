@@ -1480,6 +1480,103 @@ h3 {
   font-size: 0.78rem;
 }
 
+.payment-create-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.payment-create-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.payment-create-form input,
+.payment-create-form select,
+.payment-update-form input,
+.payment-update-form select {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.payment-create-form button,
+.payment-update-form button {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.payment-create-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.payment-list {
+  display: grid;
+  gap: 10px;
+}
+
+.payment-row {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) auto minmax(180px, 0.9fr) minmax(380px, 1.5fr);
+  gap: 14px;
+  align-items: center;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fafbf9;
+}
+
+.payment-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-summary p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.payment-amount {
+  font-size: 1.15rem;
+}
+
+.payment-link-field {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.payment-link-field a,
+.payment-link-field span {
+  display: block;
+  overflow: hidden;
+  color: var(--teal);
+  font-size: 0.84rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.payment-update-form {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(110px, 0.7fr) minmax(150px, 1fr) auto;
+  gap: 7px;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -1629,7 +1726,10 @@ h3 {
   .mapping-form,
   .mapping-row,
   .sync-log-row,
-  .compliance-row {
+  .compliance-row,
+  .payment-create-form,
+  .payment-row,
+  .payment-update-form {
     grid-template-columns: 1fr;
   }
 

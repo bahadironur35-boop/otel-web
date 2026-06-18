@@ -68,6 +68,24 @@ enum ComplianceStatus {
   NOT_APPLICABLE
 }
 
+enum PaymentProvider {
+  MANUAL
+  IYZICO
+  PAYTR
+  BANK_POS
+}
+
+enum PaymentStatus {
+  CREATED
+  LINK_SENT
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  REFUNDED
+  CANCELLED
+}
+
 model Hotel {
   id           String                @id @default(cuid())
   name         String
@@ -85,6 +103,7 @@ model Hotel {
   roomMappings RoomMapping[]
   syncLogs     SyncLog[]
   compliance   ComplianceItem[]
+  payments     Payment[]
 }
 
 model RoomType {
@@ -121,6 +140,7 @@ model Reservation {
   notes       String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+  payments    Payment[]
 }
 
 model Task {
@@ -255,4 +275,26 @@ model ComplianceItem {
   updatedAt DateTime         @updatedAt
 
   @@unique([hotelId, code])
+}
+
+model Payment {
+  id                  String          @id @default(cuid())
+  hotelId             String
+  hotel               Hotel           @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  reservationId       String
+  reservation         Reservation     @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  provider            PaymentProvider @default(MANUAL)
+  status              PaymentStatus   @default(CREATED)
+  amount              Int
+  currency            String          @default("TRY")
+  paymentLink         String?
+  externalTransaction String?
+  failureReason       String?
+  expiresAt           DateTime?
+  paidAt              DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([hotelId, status])
+  @@index([reservationId, createdAt])
 }

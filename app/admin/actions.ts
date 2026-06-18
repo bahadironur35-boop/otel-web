@@ -6,6 +6,8 @@ import {
   ChannelStatus,
   ComplianceStatus,
   IntegrationStatus,
+  PaymentProvider,
+  PaymentStatus,
   ReservationStatus,
   RoomStatus,
   SyncDirection,
@@ -607,4 +609,94 @@ export async function updateComplianceItem(formData: FormData) {
 
   revalidatePath("/admin/compliance");
   redirect("/admin/compliance?status=updated");
+}
+
+export async function createPaymentRequest(formData: FormData) {
+  const reservationId = String(formData.get("reservationId") ?? "");
+  const provider = String(formData.get("provider") ?? PaymentProvider.MANUAL) as PaymentProvider;
+  const paymentLink = String(formData.get("paymentLink") ?? "").trim();
+  const expiresAtValue = String(formData.get("expiresAt") ?? "");
+
+  if (!reservationId) {
+    redirect("/admin/payments?result=error");
+  }
+
+  const reservation = await prisma.reservation.findUnique({
+    where: { id: reservationId }
+  });
+
+  if (!reservation) {
+    redirect("/admin/payments?result=error");
+  }
+
+  await prisma.$transaction([
+    prisma.payment.create({
+      data: {
+        hotelId: reservation.hotelId,
+        reservationId,
+        provider,
+        status: paymentLink ? PaymentStatus.LINK_SENT : PaymentStatus.CREATED,
+        amount: reservation.totalAmount,
+        currency: reservation.currency,
+        paymentLink: paymentLink || null,
+        expiresAt: expiresAtValue ? new Date(expiresAtValue) : null
+      }
+    }),
+    prisma.reservation.update({
+      where: { id: reservationId },
+      data: { status: ReservationStatus.PAYMENT_PENDING }
+    })
+  ]);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/payments");
+  revalidatePath("/admin/reservations");
+  redirect("/admin/payments?result=created");
+}
+
+export async function updatePaymentStatus(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? PaymentStatus.PENDING) as PaymentStatus;
+  const externalTransaction = String(formData.get("externalTransaction") ?? "").trim();
+  const failureReason = String(formData.get("failureReason") ?? "").trim();
+
+  if (!id) {
+    redirect("/admin/payments?result=error");
+  }
+
+  const payment = await prisma.payment.findUnique({
+    where: { id }
+  });
+
+  if (!payment) {
+    redirect("/admin/payments?result=error");
+  }
+
+  await prisma.$transaction([
+    prisma.payment.update({
+      where: { id },
+      data: {
+        status,
+        externalTransaction: externalTransaction || null,
+        failureReason: failureReason || null,
+        paidAt: status === PaymentStatus.PAID ? new Date() : payment.paidAt
+      }
+    }),
+    prisma.reservation.update({
+      where: { id: payment.reservationId },
+      data: {
+        status:
+          status === PaymentStatus.PAID
+            ? ReservationStatus.CONFIRMED
+            : status === PaymentStatus.CANCELLED
+              ? ReservationStatus.CANCELLED
+              : ReservationStatus.PAYMENT_PENDING
+      }
+    })
+  ]);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/payments");
+  revalidatePath("/admin/reservations");
+  redirect("/admin/payments?result=updated");
 }

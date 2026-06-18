@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 const navItems = [
   ["Özet", "/admin"],
   ["Rezervasyonlar", "/admin/reservations"],
+  ["Ödemeler", "/admin/payments"],
   ["Odalar", "/admin/rooms"],
   ["Görevler", "/admin/tasks"],
   ["Kanallar", "/admin/channels"],
