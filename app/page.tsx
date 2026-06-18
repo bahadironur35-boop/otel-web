@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createPublicReservation } from "@/app/actions";
+import { BookingSubmitButton } from "@/components/booking-submit-button";
 import { getHotelData, getPublicRoomOptions } from "@/lib/data";
 
 export default async function HomePage({
@@ -144,7 +145,7 @@ export default async function HomePage({
             Misafir sayısı
             <input name="guests" type="number" min="1" max="8" defaultValue="2" required />
           </label>
-          <button type="submit">Rezervasyon talebi gönder</button>
+          <BookingSubmitButton />
         </form>
       </section>
 

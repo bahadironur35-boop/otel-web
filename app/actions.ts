@@ -3,7 +3,9 @@
 import { ReservationStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { getRoomAvailability, parseStayDates } from "@/lib/availability";
+import { sendReservationEmails } from "@/lib/email";
 import { hasDatabase, prisma } from "@/lib/prisma";
 
 export async function createPublicReservation(formData: FormData) {
@@ -40,6 +42,8 @@ export async function createPublicReservation(formData: FormData) {
     redirect("/?booking=unavailable#demo");
   }
 
+  const totalAmount = roomType.nightlyRate * nights;
+
   await prisma.reservation.create({
     data: {
       hotelId: roomType.hotelId,
@@ -51,9 +55,27 @@ export async function createPublicReservation(formData: FormData) {
       guests,
       channel: "Web sitesi",
       status: ReservationStatus.NEW,
-      totalAmount: roomType.nightlyRate * nights,
+      totalAmount,
       currency: roomType.currency,
       notes: guestPhone ? `Telefon: ${guestPhone}` : null
+    }
+  });
+
+  after(async () => {
+    try {
+      await sendReservationEmails({
+        guestName,
+        guestEmail,
+        guestPhone,
+        roomName: roomType.name,
+        checkIn,
+        checkOut,
+        guests,
+        totalAmount,
+        currency: roomType.currency
+      });
+    } catch (error) {
+      console.error("Reservation email notification failed.", error);
     }
   });
 

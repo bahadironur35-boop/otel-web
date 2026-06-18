@@ -9,6 +9,7 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 - Prisma ile PostgreSQL veri modeli
 - Rezervasyon, oda tipi ve görev oluşturma formları
 - Admin panel için e-posta/şifre girişi ve oturum koruması
+- Yeni rezervasyonda yönetici ve misafir e-posta bildirimi
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
@@ -56,6 +57,18 @@ SESSION_SECRET="uzun-rastgele-bir-değer"
 
 `SESSION_SECRET` için uzun, tahmin edilmesi zor bir metin kullanın.
 
+## E-posta bildirimleri
+
+Yeni web rezervasyonu geldiğinde yöneticiye ve misafire e-posta göndermek için Resend kullanılabilir:
+
+```env
+RESEND_API_KEY="re_xxxxxxxxx"
+RESEND_FROM_EMAIL="StayOS <reservations@example.com>"
+RESERVATION_NOTIFICATION_EMAIL="hotel-manager@example.com"
+```
+
+Gönderen adresindeki alan adının Resend üzerinde doğrulanmış olması gerekir. E-posta ayarları yoksa rezervasyon kaydı çalışmaya devam eder, yalnızca bildirim atlanır.
+
 ## GitHub'a gönderme
 
 ```bash
@@ -77,6 +90,7 @@ git push -u origin main
 6. Output directory boş bırakılır.
 7. Gerçek veri için Vercel Environment Variables alanına `DATABASE_URL` ve `DIRECT_URL` eklenir.
 8. Admin girişi için `ADMIN_EMAIL`, `ADMIN_PASSWORD` ve `SESSION_SECRET` eklenir.
+9. E-posta için `RESEND_API_KEY`, `RESEND_FROM_EMAIL` ve `RESERVATION_NOTIFICATION_EMAIL` eklenir.
 7. Deploy butonuna basılır.
 
 Vercel CLI kullanmak isterseniz:
