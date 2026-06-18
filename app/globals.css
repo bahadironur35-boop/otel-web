@@ -374,6 +374,39 @@ h3 {
   animation: button-spin 700ms linear infinite;
 }
 
+.booking-status-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
+  white-space: nowrap;
+  animation: booking-message-in 180ms ease-out;
+}
+
+.booking-status-message.success {
+  color: #236b35;
+}
+
+.booking-status-message.danger {
+  color: #9f3f2f;
+}
+
+@keyframes booking-message-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes button-spin {
   to {
     transform: rotate(360deg);
@@ -1127,6 +1160,11 @@ h3 {
   .admin-form.compact,
   .room-edit-grid {
     grid-template-columns: 1fr;
+  }
+
+  .booking-status-message {
+    font-size: 0.72rem;
+    white-space: normal;
   }
 
   .section-heading,

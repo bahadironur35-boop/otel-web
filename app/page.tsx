@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createPublicReservation } from "@/app/actions";
 import { BookingSubmitButton } from "@/components/booking-submit-button";
+import { BookingStatusMessage } from "@/components/booking-status-message";
 import { getHotelData, getPublicRoomOptions } from "@/lib/data";
 
 export default async function HomePage({
@@ -91,24 +92,6 @@ export default async function HomePage({
             Tarihlerini ve oda tipini seç. Talebin otel yönetim paneline yeni rezervasyon olarak düşsün; ekip
             müsaitliği kontrol edip onaylasın.
           </p>
-          {params.booking === "success" ? (
-            <p className="notice success">Talebin alındı. Otel ekibi rezervasyonunu kontrol edip sana dönüş yapacak.</p>
-          ) : null}
-          {params.booking === "demo" ? (
-            <p className="notice">Rezervasyon kaydı için veritabanı bağlantısı gerekiyor.</p>
-          ) : null}
-          {params.booking === "missing" ? (
-            <p className="notice danger">Lütfen zorunlu alanları doldur.</p>
-          ) : null}
-          {params.booking === "invalid-dates" ? (
-            <p className="notice danger">Çıkış tarihi giriş tarihinden sonra olmalı.</p>
-          ) : null}
-          {params.booking === "room-not-found" ? (
-            <p className="notice danger">Seçilen oda tipi artık müsait değil. Lütfen başka bir oda seç.</p>
-          ) : null}
-          {params.booking === "unavailable" ? (
-            <p className="notice danger">Bu oda tipi seçilen tarihlerde dolu. Başka tarih veya oda tipi seç.</p>
-          ) : null}
         </div>
         <form className="search-panel public-booking-form" action={createPublicReservation}>
           <label>
@@ -146,6 +129,27 @@ export default async function HomePage({
             <input name="guests" type="number" min="1" max="8" defaultValue="2" required />
           </label>
           <BookingSubmitButton />
+          {params.booking === "success" ? (
+            <BookingStatusMessage
+              message="Rezervasyon talebiniz alındı. Otel ekibi rezervasyonunuzu kontrol edip size dönüş yapacak."
+              tone="success"
+            />
+          ) : null}
+          {params.booking === "demo" ? (
+            <BookingStatusMessage message="Rezervasyon kaydı için veritabanı bağlantısı gerekiyor." />
+          ) : null}
+          {params.booking === "missing" ? (
+            <BookingStatusMessage message="Lütfen zorunlu alanları doldurun." tone="danger" />
+          ) : null}
+          {params.booking === "invalid-dates" ? (
+            <BookingStatusMessage message="Çıkış tarihi giriş tarihinden sonra olmalı." tone="danger" />
+          ) : null}
+          {params.booking === "room-not-found" ? (
+            <BookingStatusMessage message="Seçilen oda tipi artık müsait değil." tone="danger" />
+          ) : null}
+          {params.booking === "unavailable" ? (
+            <BookingStatusMessage message="Bu oda tipi seçilen tarihlerde dolu." tone="danger" />
+          ) : null}
         </form>
       </section>
 
