@@ -1022,6 +1022,42 @@ h3 {
   background: #fff0ed;
 }
 
+.channel-create-form {
+  grid-template-columns: minmax(0, 2fr) minmax(160px, 1fr) auto;
+}
+
+.channel-grid {
+  align-items: start;
+}
+
+.channel-card h3 {
+  margin: 0 0 16px;
+}
+
+.channel-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.channel-actions button {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--teal);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.channel-actions .danger-button {
+  color: #9f3f2f;
+  background: #fff0ed;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -1158,13 +1194,18 @@ h3 {
   .admin-grid.three,
   .admin-form,
   .admin-form.compact,
-  .room-edit-grid {
+  .room-edit-grid,
+  .channel-create-form {
     grid-template-columns: 1fr;
   }
 
   .booking-status-message {
     font-size: 0.72rem;
     white-space: normal;
+  }
+
+  .channel-actions {
+    grid-template-columns: 1fr;
   }
 
   .section-heading,

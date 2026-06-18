@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { ReservationStatus, RoomStatus, TaskPriority } from "@prisma/client";
+import { ChannelStatus, ReservationStatus, RoomStatus, TaskPriority } from "@prisma/client";
 import { getRoomAvailability, parseStayDates } from "@/lib/availability";
 import { hasDatabase, prisma } from "@/lib/prisma";
 
@@ -273,4 +273,124 @@ export async function deleteTask(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/tasks");
   redirect("/admin/tasks?deleted=1");
+}
+
+export async function createChannel(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/channels?demo=1");
+  }
+
+  const hotelId = await getDemoHotelId();
+  const name = String(formData.get("name") ?? "").trim();
+  const inventory = Number(formData.get("inventory") ?? 0);
+
+  if (!name || inventory < 0) {
+    redirect("/admin/channels?error=missing-fields");
+  }
+
+  await prisma.channel.upsert({
+    where: {
+      hotelId_name: {
+        hotelId,
+        name
+      }
+    },
+    update: {
+      inventory,
+      status: ChannelStatus.ACTION_REQUIRED,
+      alert: "İlk senkronizasyon bekleniyor"
+    },
+    create: {
+      hotelId,
+      name,
+      inventory,
+      status: ChannelStatus.ACTION_REQUIRED,
+      alert: "İlk senkronizasyon bekleniyor"
+    }
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?created=1");
+}
+
+export async function updateChannel(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/channels?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+  const inventory = Number(formData.get("inventory") ?? 0);
+  const status = String(formData.get("status") ?? ChannelStatus.SYNCED) as ChannelStatus;
+  const alert = String(formData.get("alert") ?? "Sorun yok").trim();
+
+  if (!id || inventory < 0 || !alert) {
+    redirect("/admin/channels?error=missing-fields");
+  }
+
+  await prisma.channel.update({
+    where: { id },
+    data: {
+      inventory,
+      status,
+      alert
+    }
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?updated=1");
+}
+
+export async function syncChannel(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/channels?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/channels?error=missing-fields");
+  }
+
+  await prisma.channel.update({
+    where: { id },
+    data: {
+      status: ChannelStatus.SYNCED,
+      alert: "Sorun yok"
+    }
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?synced=1");
+}
+
+export async function deactivateChannel(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/channels?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+
+  if (!id) {
+    redirect("/admin/channels?error=missing-fields");
+  }
+
+  await prisma.channel.update({
+    where: { id },
+    data: {
+      inventory: 0,
+      status: ChannelStatus.ACTION_REQUIRED,
+      alert: "Kanal satışa kapalı"
+    }
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin");
+  revalidatePath("/admin/channels");
+  redirect("/admin/channels?deactivated=1");
 }

@@ -99,22 +99,34 @@ export const tasks = [
 
 export const channels = [
   {
+    id: "demo-channel-booking",
     name: "Booking",
     status: "Senkron",
+    statusKey: "SYNCED",
     inventory: "42 oda",
-    alert: "Aile Odası fiyat planı kontrol edilmeli"
+    inventoryCount: 42,
+    alert: "Aile Odası fiyat planı kontrol edilmeli",
+    lastSynced: "Bugün 18:30"
   },
   {
+    id: "demo-channel-expedia",
     name: "Expedia",
     status: "Senkron",
+    statusKey: "SYNCED",
     inventory: "39 oda",
-    alert: "Sorun yok"
+    inventoryCount: 39,
+    alert: "Sorun yok",
+    lastSynced: "Bugün 18:28"
   },
   {
+    id: "demo-channel-airbnb",
     name: "Airbnb",
     status: "Gecikmeli",
+    statusKey: "DELAYED",
     inventory: "12 oda",
-    alert: "Stok güncellemesi 18 dakika gecikti"
+    inventoryCount: 12,
+    alert: "Stok güncellemesi 18 dakika gecikti",
+    lastSynced: "Bugün 18:10"
   }
 ];
 
@@ -213,8 +225,16 @@ export async function getHotelData() {
         id: channel.id,
         name: channel.name,
         status: statusLabels[channel.status],
+        statusKey: channel.status,
         inventory: `${channel.inventory} oda`,
-        alert: channel.alert
+        inventoryCount: channel.inventory,
+        alert: channel.alert,
+        lastSynced: new Intl.DateTimeFormat("tr-TR", {
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(channel.updatedAt)
       }))
     };
   } catch (error) {
