@@ -215,6 +215,12 @@ img {
   letter-spacing: 0;
 }
 
+.payments-topline h2 {
+  max-width: none;
+  font-size: clamp(1.85rem, 3vw, 2.8rem);
+  white-space: nowrap;
+}
+
 .section p {
   max-width: 720px;
   color: var(--muted);
@@ -1577,6 +1583,51 @@ h3 {
   gap: 7px;
 }
 
+.settings-intro {
+  max-width: 920px;
+  margin: 0 0 18px;
+  color: var(--muted);
+}
+
+.payment-provider-grid {
+  align-items: stretch;
+}
+
+.payment-provider-card {
+  min-height: 270px;
+}
+
+.payment-provider-card > p {
+  color: var(--muted);
+}
+
+.environment-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.environment-list strong {
+  font-size: 0.82rem;
+}
+
+.environment-list code {
+  overflow: hidden;
+  padding: 8px 9px;
+  border-radius: 6px;
+  color: var(--teal-dark);
+  background: #edf5f1;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.provider-ready-note {
+  margin-top: auto;
+  color: #236b35 !important;
+  font-weight: 800;
+}
+
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -1744,6 +1795,10 @@ h3 {
 
   .channel-actions {
     grid-template-columns: 1fr;
+  }
+
+  .payments-topline h2 {
+    white-space: normal;
   }
 
   .integration-control-bar,

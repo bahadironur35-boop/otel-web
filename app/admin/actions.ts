@@ -18,6 +18,7 @@ import { getRoomAvailability, parseStayDates } from "@/lib/availability";
 import { testChannexConnection } from "@/lib/channex";
 import { syncInventoryToChannex } from "@/lib/channex-sync";
 import { hasDatabase, prisma } from "@/lib/prisma";
+import { isPaymentProviderConfigured } from "@/lib/payment-providers";
 
 async function getDemoHotelId() {
   const hotel = await prisma.hotel.upsert({
@@ -619,6 +620,10 @@ export async function createPaymentRequest(formData: FormData) {
 
   if (!reservationId) {
     redirect("/admin/payments?result=error");
+  }
+
+  if (!isPaymentProviderConfigured(provider)) {
+    redirect("/admin/payments?result=provider-not-configured");
   }
 
   const reservation = await prisma.reservation.findUnique({

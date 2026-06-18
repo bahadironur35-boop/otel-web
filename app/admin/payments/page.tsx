@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { createPaymentRequest, updatePaymentStatus } from "@/app/admin/actions";
+import { getConfiguredPaymentProviders } from "@/lib/payment-providers";
 import { getPaymentWorkspace } from "@/lib/payments";
 
 const statusTone: Record<string, string> = {
@@ -18,14 +20,18 @@ export default async function PaymentsPage({
   searchParams: Promise<{ result?: string }>;
 }) {
   const [workspace, params] = await Promise.all([getPaymentWorkspace(), searchParams]);
+  const configuredProviders = getConfiguredPaymentProviders();
 
   return (
     <>
-      <div className="admin-topline">
+      <div className="admin-topline payments-topline">
         <div>
           <p className="section-kicker">Tahsilat merkezi</p>
           <h2>Ödeme talepleri ve işlem durumları</h2>
         </div>
+        <Link className="admin-action secondary-action" href="/admin/payment-settings">
+          Sağlayıcı ayarları
+        </Link>
       </div>
 
       {!workspace.schemaReady ? (
@@ -34,6 +40,9 @@ export default async function PaymentsPage({
       {params.result === "created" ? <p className="notice success">Ödeme talebi oluşturuldu.</p> : null}
       {params.result === "updated" ? <p className="notice success">Ödeme durumu güncellendi.</p> : null}
       {params.result === "error" ? <p className="notice danger">Ödeme işlemi tamamlanamadı.</p> : null}
+      {params.result === "provider-not-configured" ? (
+        <p className="notice danger">Seçilen ödeme sağlayıcısı henüz yapılandırılmadı.</p>
+      ) : null}
 
       <section className="workspace-section">
         <div className="workspace-heading">
@@ -55,11 +64,10 @@ export default async function PaymentsPage({
           </label>
           <label>
             Sağlayıcı
-            <select name="provider" defaultValue="MANUAL" disabled={!workspace.schemaReady}>
-              <option value="MANUAL">Manuel ödeme bağlantısı</option>
-              <option value="IYZICO">iyzico</option>
-              <option value="PAYTR">PayTR</option>
-              <option value="BANK_POS">Banka sanal POS</option>
+            <select name="provider" defaultValue={configuredProviders[0]?.id} disabled={!workspace.schemaReady}>
+              {configuredProviders.map((provider) => (
+                <option key={provider.id} value={provider.id}>{provider.name}</option>
+              ))}
             </select>
           </label>
           <label>
@@ -70,7 +78,9 @@ export default async function PaymentsPage({
             Son kullanım
             <input name="expiresAt" type="datetime-local" disabled={!workspace.schemaReady} />
           </label>
-          <button type="submit" disabled={!workspace.schemaReady || !workspace.reservations.length}>Talep oluştur</button>
+          <button type="submit" disabled={!workspace.schemaReady || !workspace.reservations.length || !configuredProviders.length}>
+            Talep oluştur
+          </button>
         </form>
       </section>
 
