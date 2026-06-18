@@ -2546,3 +2546,177 @@ body:has(.admin-shell) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Admin visual refinement */
+.admin-shell {
+  --teal: #1767d2;
+  --teal-dark: #1055b4;
+  --coral: #1767d2;
+  color: #142236;
+  font-family: "Segoe UI Variable", "Segoe UI", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+}
+
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell strong,
+.admin-shell b {
+  font-weight: 650;
+}
+
+.admin-header-title strong,
+.admin-header-meta strong,
+.admin-brand strong {
+  font-weight: 650;
+}
+
+.admin-sidebar nav a,
+.admin-sidebar-bottom > a,
+.admin-sidebar-bottom button {
+  font-weight: 600;
+}
+
+.admin-topline h2 {
+  color: #132238;
+  font-size: clamp(1.55rem, 2.2vw, 2.15rem);
+  font-weight: 650;
+}
+
+.section-kicker {
+  color: #1767d2;
+  font-weight: 700;
+}
+
+.admin-form label,
+.reservation-filters label,
+.room-edit-form label,
+.payment-control-panel label,
+.payment-create-form label,
+.mapping-form label {
+  color: #536174;
+  font-weight: 600;
+}
+
+.admin-form input,
+.admin-form select,
+.reservation-filters input,
+.reservation-filters select,
+.room-edit-form input,
+.room-edit-form select,
+.payment-control-panel input,
+.payment-control-panel select,
+.payment-create-form input,
+.payment-create-form select,
+.payment-update-form input,
+.payment-update-form select {
+  min-height: 46px;
+  border-color: #d9e1eb;
+  color: #17243a;
+  font-weight: 450;
+}
+
+.admin-form input::placeholder,
+.reservation-filters input::placeholder,
+.payment-control-panel input::placeholder {
+  color: #8a96a6;
+  font-weight: 400;
+}
+
+.admin-action,
+.admin-form button,
+.reservation-filters button,
+.payment-control-panel > button,
+.payment-create-form button,
+.payment-update-form button,
+.table-actions button,
+.task-actions button,
+.room-edit-form button,
+.channel-actions button,
+.integration-control-actions button,
+.connection-row button,
+.mapping-form button,
+.compliance-row button {
+  min-height: 44px;
+  border-radius: 6px;
+  background: #1767d2;
+  box-shadow: none;
+  font-weight: 650;
+}
+
+.admin-action:hover,
+.admin-form button:hover,
+.reservation-filters button:hover,
+.payment-control-panel > button:hover:not(:disabled),
+.table-actions button:hover,
+.task-actions button:hover {
+  background: #1055b4;
+}
+
+.secondary-action,
+.reservation-filters > a,
+.table-detail-link {
+  min-height: 44px;
+  color: #174f91;
+  background: #eaf2fb;
+  font-weight: 600;
+}
+
+.table-detail-link {
+  padding-inline: 12px;
+}
+
+.table-actions {
+  align-items: stretch;
+}
+
+.table-actions form,
+.table-actions button,
+.table-actions .table-detail-link {
+  height: 44px;
+}
+
+.table-actions .danger-button,
+.task-actions .danger-button,
+.detail-actions .danger-button {
+  background: #b44236;
+}
+
+.table-head {
+  color: #657286;
+  font-weight: 650;
+}
+
+.table-row {
+  color: #1b293b;
+  font-size: 0.9rem;
+}
+
+.table-row > strong {
+  font-weight: 650;
+}
+
+.status-pill,
+.pill {
+  font-weight: 650;
+}
+
+.notice {
+  font-weight: 550;
+}
+
+.workspace-heading h3,
+.operations-panel-heading h3,
+.card-heading-row h3 {
+  font-weight: 650;
+}
+
+.list-summary strong,
+.card-heading-row a,
+.workspace-heading > span {
+  font-weight: 600;
+}
+
+.payments-topline h2 {
+  font-size: clamp(1.6rem, 2.3vw, 2.2rem);
+}
