@@ -114,6 +114,11 @@ export default async function AdminHomePage() {
               <strong>Oda hesabı</strong>
               <span>Folyo ve harcamalar</span>
             </Link>
+            <Link href="/admin/checkouts">
+              <DoorOpen />
+              <strong>Çıkış işlemi</strong>
+              <span>Hesabı kapat ve oda boşalt</span>
+            </Link>
             <Link href="/admin/rooms">
               <BedDouble />
               <strong>Oda durumu</strong>

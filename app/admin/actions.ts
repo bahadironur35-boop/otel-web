@@ -898,29 +898,73 @@ export async function checkInGuest(formData: FormData) {
   redirect(`/admin/guests/${guest.id}?result=checked-in`);
 }
 
-export async function checkOutGuest(formData: FormData) {
+export async function finalizeGuestCheckout(formData: FormData) {
   const stayId = String(formData.get("stayId") ?? "");
+  const paymentMethod = String(formData.get("paymentMethod") ?? "");
+  const externalTransaction = String(formData.get("externalTransaction") ?? "").trim();
 
-  if (!stayId) redirect("/admin/guests?result=error");
+  if (!stayId) {
+    redirect("/admin/checkouts?result=error");
+  }
 
   const stay = await prisma.stay.findUnique({
     where: { id: stayId },
-    include: { physicalRoom: true }
+    include: {
+      physicalRoom: true,
+      reservation: {
+        include: {
+          payments: { where: { status: PaymentStatus.PAID } },
+          folio: { include: { items: true } }
+        }
+      }
+    }
   });
+
   if (!stay || stay.status !== StayStatus.CHECKED_IN) {
-    redirect("/admin/guests?result=error");
+    redirect("/admin/checkouts?result=error");
   }
 
-  await prisma.$transaction([
-    prisma.stay.update({
-      where: { id: stayId },
+  const extrasTotal =
+    stay.reservation.folio?.items.reduce((sum, item) => sum + item.amount, 0) ?? 0;
+  const paidTotal = stay.reservation.payments.reduce((sum, payment) => sum + payment.amount, 0);
+  const balance = Math.max(stay.reservation.totalAmount + extrasTotal - paidTotal, 0);
+
+  if (balance > 0 && !["CASH", "CARD"].includes(paymentMethod)) {
+    redirect(`/admin/checkouts?stay=${stay.id}&result=balance`);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    if (balance > 0) {
+      await tx.payment.create({
+        data: {
+          hotelId: stay.hotelId,
+          reservationId: stay.reservationId,
+          provider: paymentMethod === "CARD" ? PaymentProvider.BANK_POS : PaymentProvider.MANUAL,
+          status: PaymentStatus.PAID,
+          amount: balance,
+          currency: stay.reservation.currency,
+          externalTransaction: externalTransaction || null,
+          paidAt: new Date()
+        }
+      });
+    }
+
+    if (stay.reservation.folio) {
+      await tx.folio.update({
+        where: { id: stay.reservation.folio.id },
+        data: { status: "CLOSED", closedAt: new Date() }
+      });
+    }
+
+    await tx.stay.update({
+      where: { id: stay.id },
       data: { status: StayStatus.CHECKED_OUT, checkedOutAt: new Date() }
-    }),
-    prisma.physicalRoom.update({
+    });
+    await tx.physicalRoom.update({
       where: { id: stay.physicalRoomId },
       data: { status: PhysicalRoomStatus.CLEANING }
-    }),
-    prisma.task.create({
+    });
+    await tx.task.create({
       data: {
         hotelId: stay.hotelId,
         title: `Oda ${stay.physicalRoom.number} çıkış temizliği`,
@@ -928,13 +972,17 @@ export async function checkOutGuest(formData: FormData) {
         dueAt: new Date(Date.now() + 60 * 60 * 1000),
         priority: TaskPriority.HIGH
       }
-    })
-  ]);
+    });
+  });
 
   revalidatePath("/admin");
+  revalidatePath("/admin/checkouts");
+  revalidatePath("/admin/folios");
   revalidatePath("/admin/guests");
+  revalidatePath("/admin/payments");
   revalidatePath("/admin/rooms");
-  redirect(`/admin/guests/${stay.guestId}?result=checked-out`);
+  revalidatePath("/admin/tasks");
+  redirect("/admin/checkouts?result=completed");
 }
 
 export async function addFolioItem(formData: FormData) {

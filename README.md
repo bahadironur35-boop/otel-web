@@ -159,6 +159,8 @@ supabase/folios-migration.sql
 
 dosyasını çalıştırın. `/admin/folios` ekranı aktif odaların hesaplarını ve kalan bakiyelerini gösterir. Tahsilat talepleri folyo harcamaları dahil toplam tutar üzerinden oluşturulur.
 
+`/admin/checkouts` ekranı kalan bakiyeyi nakit veya kart olarak tahsil eder, folyoyu kapatır, misafirin check-out işlemini tamamlar ve odayı otomatik olarak housekeeping kuyruğuna gönderir.
+
 ## GitHub'a gönderme
 
 ```bash

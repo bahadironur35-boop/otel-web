@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { checkOutGuest } from "@/app/admin/actions";
 import { getGuestById } from "@/lib/guests";
 import { formatCurrency, formatDateRange } from "@/lib/format";
 
@@ -47,10 +46,7 @@ export default async function GuestDetailPage({
             <div className="active-stay-card">
               <strong>Oda {activeStay.physicalRoom.number}</strong>
               <span>{formatDateRange(activeStay.expectedCheckIn, activeStay.expectedCheckOut)}</span>
-              <form action={checkOutGuest}>
-                <input name="stayId" type="hidden" value={activeStay.id} />
-                <button type="submit">Check-out yap</button>
-              </form>
+              <Link className="admin-action" href={`/admin/checkouts?stay=${activeStay.id}`}>Çıkış masasına git</Link>
             </div>
           ) : <p className="empty-state padded">Aktif konaklama yok.</p>}
         </section>
