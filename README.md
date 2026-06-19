@@ -12,6 +12,7 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 - Yeni rezervasyonda yönetici ve misafir e-posta bildirimi
 - Channex staging bağlantısı, stok senkronizasyonu ve webhook giriş noktası
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
+- Tarih aralığına göre gelir, tahsilat, doluluk, ADR, RevPAR, kanal ve oda tipi raporları
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
 ## Ürün yol haritası
@@ -170,6 +171,10 @@ supabase/folios-migration.sql
 dosyasını çalıştırın. `/admin/folios` ekranı aktif odaların hesaplarını ve kalan bakiyelerini gösterir. Tahsilat talepleri folyo harcamaları dahil toplam tutar üzerinden oluşturulur.
 
 `/admin/checkouts` ekranı kalan bakiyeyi nakit veya kart olarak tahsil eder, folyoyu kapatır, misafirin check-out işlemini tamamlar ve odayı otomatik olarak housekeeping kuyruğuna gönderir.
+
+## Yönetim raporları
+
+`/admin/reports` ekranı seçilen tarih aralığı için rezervasyon geliri, tahsil edilen tutar, doluluk, ADR ve RevPAR metriklerini hesaplar. Aylık gelir eğilimi, kanal dağılımı, oda tipi performansı ve ödeme yöntemi kırılımları aynı ekranda gösterilir. Yeni veritabanı tablosu gerektirmez.
 
 ## GitHub'a gönderme
 

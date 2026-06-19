@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BedDouble,
+  BarChart3,
   CalendarDays,
   CheckSquare,
   ChevronDown,
@@ -33,6 +34,7 @@ const navItems = [
   { label: "Tahsilatlar", href: "/admin/payments", icon: CircleDollarSign },
   { label: "Odalar", href: "/admin/rooms", icon: BedDouble },
   { label: "Görevler", href: "/admin/tasks", icon: CheckSquare },
+  { label: "Raporlar", href: "/admin/reports", icon: BarChart3 },
   { label: "Kanallar", href: "/admin/channels", icon: Network },
   { label: "Uyumluluk", href: "/admin/compliance", icon: ShieldCheck }
 ];
@@ -46,6 +48,7 @@ const moduleContexts = [
   { path: "/admin/payments", title: "Tahsilat Merkezi", subtitle: "Ödeme talepleri ve işlem durumları" },
   { path: "/admin/rooms", title: "Oda Operasyonları", subtitle: "Stok, hazırlık ve fiziksel oda durumu" },
   { path: "/admin/tasks", title: "Operasyon Görevleri", subtitle: "Housekeeping, bakım ve ön büro" },
+  { path: "/admin/reports", title: "Yönetim Raporları", subtitle: "Gelir, doluluk ve kanal performansı" },
   { path: "/admin/channels", title: "Kanal Yönetimi", subtitle: "OTA bağlantıları ve senkronizasyon" },
   { path: "/admin/compliance", title: "Uyumluluk Merkezi", subtitle: "Yasal ve operasyonel kontrol listesi" },
   { path: "/admin", title: "Operasyon Özeti", subtitle: "StayOS otel yönetim merkezi" }

@@ -99,8 +99,9 @@ Sidebar navigasyon sırası iş akışını izlemelidir:
 6. Tahsilatlar
 7. Odalar
 8. Görevler
-9. Kanallar
-10. Uyumluluk
+9. Raporlar
+10. Kanallar
+11. Uyumluluk
 
 ### Header
 
@@ -329,6 +330,7 @@ Tasarım sistemi değişikliği yapılırken:
 
 ### 2026-06-19
 
+- Yönetim raporları ekranı için metrik, sıralama, ilerleme ve CSS grafik kalıpları eklendi.
 - StayOS admin paneli premium B2B SaaS tasarım diline geçirildi.
 - Sidebar ana rengi `#0A192F`, ana aksiyon rengi `#1A73E8` olarak standartlaştırıldı.
 - Header beyaz kurumsal yüzeye dönüştürüldü ve modül bağlamı eklendi.
