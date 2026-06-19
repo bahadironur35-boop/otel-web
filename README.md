@@ -21,6 +21,16 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 3. Ödeme, e-posta/SMS/WhatsApp bildirimleri ve operasyon görevleri
 4. Channel manager katmanı ve OTA senkronizasyonları
 
+## Tasarım sistemi
+
+StayOS yönetim panelinin renk, tipografi, yerleşim, bileşen, dokunmatik kullanım ve responsive kuralları:
+
+```text
+docs/stayos-design-system.md
+```
+
+Yeni bir admin ekranı eklenirken veya mevcut tasarım dili değiştirilirken bu belge ve uygulama stilleri birlikte güncellenmelidir.
+
 ## Yerelde çalıştırma
 
 Bağımlılıkları kurduktan sonra geliştirme sunucusunu başlatabilirsiniz.
