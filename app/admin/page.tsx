@@ -8,8 +8,11 @@ import {
   DoorOpen,
   Network,
   ReceiptText,
+  Sparkles,
+  TrendingUp,
   UserRoundCheck,
-  UsersRound
+  UsersRound,
+  WalletCards
 } from "lucide-react";
 import { getHotelData } from "@/lib/data";
 import { getDashboardMetrics } from "@/lib/dashboard";
@@ -36,24 +39,20 @@ export default async function AdminHomePage() {
 
       <div className="admin-metrics operations-metrics">
         <article>
-          <span>Bugünkü doluluk</span>
-          <strong>%{metrics.occupancyRate}</strong>
-          <small>{metrics.occupiedRooms} / {metrics.totalInventory} oda</small>
+          <div className="metric-icon blue"><BedDouble size={20} /></div>
+          <div><span>Bugünkü doluluk</span><strong>%{metrics.occupancyRate}</strong><small>{metrics.occupiedRooms} / {metrics.totalInventory} oda</small></div>
         </article>
         <article>
-          <span>Aktif gelir</span>
-          <strong>{metrics.projectedRevenue}</strong>
-          <small>Onaylı ve ödeme bekleyen</small>
+          <div className="metric-icon green"><WalletCards size={20} /></div>
+          <div><span>Aktif gelir</span><strong>{metrics.projectedRevenue}</strong><small>Onaylı ve ödeme bekleyen</small></div>
         </article>
         <article>
-          <span>Yeni rezervasyon</span>
-          <strong>{metrics.newReservations}</strong>
-          <small>{metrics.paymentPending} ödeme bekliyor</small>
+          <div className="metric-icon amber"><TrendingUp size={20} /></div>
+          <div><span>Yeni rezervasyon</span><strong>{metrics.newReservations}</strong><small>{metrics.paymentPending} ödeme bekliyor</small></div>
         </article>
         <article>
-          <span>Açık görev</span>
-          <strong>{metrics.openTasks}</strong>
-          <small>Operasyon ekibinde</small>
+          <div className="metric-icon violet"><Sparkles size={20} /></div>
+          <div><span>Açık görev</span><strong>{metrics.openTasks}</strong><small>Operasyon ekibinde</small></div>
         </article>
       </div>
 

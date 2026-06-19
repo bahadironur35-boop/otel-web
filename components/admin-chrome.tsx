@@ -14,6 +14,7 @@ import {
   Gauge,
   Hotel,
   LogOut,
+  Menu,
   Network,
   ReceiptText,
   Settings2,
@@ -34,6 +35,20 @@ const navItems = [
   { label: "Görevler", href: "/admin/tasks", icon: CheckSquare },
   { label: "Kanallar", href: "/admin/channels", icon: Network },
   { label: "Uyumluluk", href: "/admin/compliance", icon: ShieldCheck }
+];
+
+const moduleContexts = [
+  { path: "/admin/reservations", title: "Rezervasyon Yönetimi", subtitle: "Satış ve konaklama planlaması" },
+  { path: "/admin/guests", title: "Misafir Yönetimi", subtitle: "Profil, check-in ve konaklama geçmişi" },
+  { path: "/admin/folios", title: "Oda Hesapları", subtitle: "Folyo ve misafir harcamaları" },
+  { path: "/admin/checkouts", title: "Çıkış İşlemleri", subtitle: "Bakiye, tahsilat ve oda teslimi" },
+  { path: "/admin/payment-settings", title: "Ödeme Ayarları", subtitle: "Tahsilat sağlayıcıları ve bağlantılar" },
+  { path: "/admin/payments", title: "Tahsilat Merkezi", subtitle: "Ödeme talepleri ve işlem durumları" },
+  { path: "/admin/rooms", title: "Oda Operasyonları", subtitle: "Stok, hazırlık ve fiziksel oda durumu" },
+  { path: "/admin/tasks", title: "Operasyon Görevleri", subtitle: "Housekeeping, bakım ve ön büro" },
+  { path: "/admin/channels", title: "Kanal Yönetimi", subtitle: "OTA bağlantıları ve senkronizasyon" },
+  { path: "/admin/compliance", title: "Uyumluluk Merkezi", subtitle: "Yasal ve operasyonel kontrol listesi" },
+  { path: "/admin", title: "Operasyon Özeti", subtitle: "StayOS otel yönetim merkezi" }
 ];
 
 function formatDate(date: Date) {
@@ -58,6 +73,10 @@ function formatTime(date: Date) {
 export function AdminChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [now, setNow] = useState(() => new Date());
+  const moduleContext =
+    moduleContexts.find((item) =>
+      item.path === "/admin" ? pathname === "/admin" : pathname.startsWith(item.path)
+    ) ?? moduleContexts[moduleContexts.length - 1];
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
@@ -114,8 +133,11 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
       <div className="admin-workspace">
         <header className="admin-header">
           <div className="admin-header-title">
-            <span className="admin-mobile-menu">☰</span>
-            <strong>OTEL YÖNETİMİ</strong>
+            <Menu className="admin-mobile-menu" size={21} />
+            <span>
+              <strong>{moduleContext.title}</strong>
+              <small>{moduleContext.subtitle}</small>
+            </span>
           </div>
           <div className="admin-header-meta">
             <div>
