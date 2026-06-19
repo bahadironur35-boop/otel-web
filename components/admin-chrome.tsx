@@ -20,23 +20,31 @@ import {
   ReceiptText,
   Settings2,
   ShieldCheck,
+  UserCog,
   UsersRound
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { logoutAction } from "@/app/login/actions";
+import type { SessionUser } from "@/lib/auth";
 
-const navItems = [
+const navItems: Array<{
+  label: string;
+  href: string;
+  icon: typeof Gauge;
+  roles?: SessionUser["role"][];
+}> = [
   { label: "Operasyon Özeti", href: "/admin", icon: Gauge },
-  { label: "Rezervasyonlar", href: "/admin/reservations", icon: CalendarDays },
-  { label: "Misafirler", href: "/admin/guests", icon: UsersRound },
-  { label: "Oda Hesapları", href: "/admin/folios", icon: ReceiptText },
-  { label: "Çıkışlar", href: "/admin/checkouts", icon: DoorOpen },
-  { label: "Tahsilatlar", href: "/admin/payments", icon: CircleDollarSign },
-  { label: "Odalar", href: "/admin/rooms", icon: BedDouble },
-  { label: "Görevler", href: "/admin/tasks", icon: CheckSquare },
-  { label: "Raporlar", href: "/admin/reports", icon: BarChart3 },
-  { label: "Kanallar", href: "/admin/channels", icon: Network },
-  { label: "Uyumluluk", href: "/admin/compliance", icon: ShieldCheck }
+  { label: "Rezervasyonlar", href: "/admin/reservations", icon: CalendarDays, roles: ["ADMIN", "MANAGER", "RECEPTION"] },
+  { label: "Misafirler", href: "/admin/guests", icon: UsersRound, roles: ["ADMIN", "MANAGER", "RECEPTION"] },
+  { label: "Oda Hesapları", href: "/admin/folios", icon: ReceiptText, roles: ["ADMIN", "MANAGER", "RECEPTION", "ACCOUNTING"] },
+  { label: "Çıkışlar", href: "/admin/checkouts", icon: DoorOpen, roles: ["ADMIN", "MANAGER", "RECEPTION"] },
+  { label: "Tahsilatlar", href: "/admin/payments", icon: CircleDollarSign, roles: ["ADMIN", "MANAGER", "RECEPTION", "ACCOUNTING"] },
+  { label: "Odalar", href: "/admin/rooms", icon: BedDouble, roles: ["ADMIN", "MANAGER", "RECEPTION", "HOUSEKEEPING"] },
+  { label: "Görevler", href: "/admin/tasks", icon: CheckSquare, roles: ["ADMIN", "MANAGER", "RECEPTION", "HOUSEKEEPING"] },
+  { label: "Raporlar", href: "/admin/reports", icon: BarChart3, roles: ["ADMIN", "MANAGER", "ACCOUNTING"] },
+  { label: "Kanallar", href: "/admin/channels", icon: Network, roles: ["ADMIN", "MANAGER"] },
+  { label: "Uyumluluk", href: "/admin/compliance", icon: ShieldCheck, roles: ["ADMIN", "MANAGER"] },
+  { label: "Personel", href: "/admin/users", icon: UserCog, roles: ["ADMIN", "MANAGER"] }
 ];
 
 const moduleContexts = [
@@ -51,6 +59,7 @@ const moduleContexts = [
   { path: "/admin/reports", title: "Yönetim Raporları", subtitle: "Gelir, doluluk ve kanal performansı" },
   { path: "/admin/channels", title: "Kanal Yönetimi", subtitle: "OTA bağlantıları ve senkronizasyon" },
   { path: "/admin/compliance", title: "Uyumluluk Merkezi", subtitle: "Yasal ve operasyonel kontrol listesi" },
+  { path: "/admin/users", title: "Personel Yönetimi", subtitle: "Kullanıcı hesapları, roller ve erişim" },
   { path: "/admin", title: "Operasyon Özeti", subtitle: "StayOS otel yönetim merkezi" }
 ];
 
@@ -73,13 +82,22 @@ function formatTime(date: Date) {
   }).format(date);
 }
 
-export function AdminChrome({ children }: { children: React.ReactNode }) {
+const roleLabels = {
+  ADMIN: "Sistem yöneticisi",
+  MANAGER: "Otel yöneticisi",
+  RECEPTION: "Resepsiyon",
+  HOUSEKEEPING: "Housekeeping",
+  ACCOUNTING: "Muhasebe"
+} as const;
+
+export function AdminChrome({ children, user }: { children: React.ReactNode; user: SessionUser }) {
   const pathname = usePathname();
   const [now, setNow] = useState(() => new Date());
   const moduleContext =
     moduleContexts.find((item) =>
       item.path === "/admin" ? pathname === "/admin" : pathname.startsWith(item.path)
     ) ?? moduleContexts[moduleContexts.length - 1];
+  const canSeeSettings = ["ADMIN", "MANAGER", "ACCOUNTING"].includes(user.role);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
@@ -98,7 +116,7 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav>
-          {navItems.map((item) => {
+          {navItems.filter((item) => !item.roles || item.roles.includes(user.role)).map((item) => {
             const Icon = item.icon;
             const active =
               item.href === "/admin" ? pathname === "/admin" : pathname.startsWith(item.href);
@@ -113,10 +131,12 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="admin-sidebar-bottom">
-          <Link href="/admin/payment-settings">
-            <Settings2 size={19} />
-            <span>Sistem Ayarları</span>
-          </Link>
+          {canSeeSettings ? (
+            <Link href="/admin/payment-settings">
+              <Settings2 size={19} />
+              <span>Sistem Ayarları</span>
+            </Link>
+          ) : null}
           <div className="shift-status">
             <span className="shift-dot" />
             <div>
@@ -155,10 +175,10 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
               <strong>{formatTime(now)}</strong>
             </div>
             <div className="admin-user">
-              <span className="admin-avatar">R</span>
+              <span className="admin-avatar">{user.fullName.slice(0, 1).toUpperCase()}</span>
               <span>
-                <strong>Resepsiyon</strong>
-                <small>Aktif kullanıcı</small>
+                <strong>{user.fullName}</strong>
+                <small>{roleLabels[user.role]}</small>
               </span>
               <ChevronDown size={17} />
             </div>

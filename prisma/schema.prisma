@@ -125,6 +125,14 @@ enum FolioItemCategory {
   OTHER
 }
 
+enum StaffRole {
+  ADMIN
+  MANAGER
+  RECEPTION
+  HOUSEKEEPING
+  ACCOUNTING
+}
+
 model Hotel {
   id            String                @id @default(cuid())
   name          String
@@ -148,6 +156,7 @@ model Hotel {
   stays         Stay[]
   folios        Folio[]
   folioItems    FolioItem[]
+  staffUsers    StaffUser[]
 }
 
 model RoomType {
@@ -446,4 +455,21 @@ model FolioItem {
 
   @@index([folioId, postedAt])
   @@index([hotelId, category])
+}
+
+model StaffUser {
+  id           String    @id @default(cuid())
+  hotelId      String
+  hotel        Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  fullName     String
+  email        String
+  passwordHash String
+  role         StaffRole @default(RECEPTION)
+  active       Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([hotelId, email])
+  @@index([hotelId, role, active])
 }

@@ -102,6 +102,7 @@ Sidebar navigasyon sırası iş akışını izlemelidir:
 9. Raporlar
 10. Kanallar
 11. Uyumluluk
+12. Personel
 
 ### Header
 
@@ -303,6 +304,8 @@ Yeni bir admin ekranı eklenirken:
 9. Klavye focus ve erişilebilir isimler mevcut mu?
 10. Üretim derlemesi ve ekran kontrolü tamamlandı mı?
 
+Yeni ekran ayrıca ilgili personel rollerinin navigasyonuna ve sayfa erişim katmanına eklenmelidir. Görsel olarak gizlemek tek başına yetkilendirme sayılmaz.
+
 ## 16. Kaçınılacak uygulamalar
 
 - Çok büyük admin sayfa başlıkları
@@ -330,6 +333,7 @@ Tasarım sistemi değişikliği yapılırken:
 
 ### 2026-06-19
 
+- Personel ve rol yönetimi ekranı için kullanıcı satırı, avatar ve hesap durumu kalıpları eklendi.
 - Yönetim raporları ekranı için metrik, sıralama, ilerleme ve CSS grafik kalıpları eklendi.
 - StayOS admin paneli premium B2B SaaS tasarım diline geçirildi.
 - Sidebar ana rengi `#0A192F`, ana aksiyon rengi `#1A73E8` olarak standartlaştırıldı.

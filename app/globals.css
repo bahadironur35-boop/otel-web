@@ -3944,6 +3944,177 @@ body:has(.admin-shell) {
   }
 }
 
+/* Staff and access management */
+.staff-create-panel {
+  margin-bottom: 14px;
+}
+
+.staff-create-form {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 18px 20px;
+}
+
+.staff-create-form label {
+  display: grid;
+  gap: 7px;
+  color: #536174;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.staff-create-form button,
+.staff-edit-form button {
+  min-height: 44px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: var(--stayos-blue);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.staff-create-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.staff-list {
+  display: grid;
+}
+
+.staff-row {
+  display: grid;
+  grid-template-columns: 46px minmax(180px, 0.9fr) auto minmax(480px, 1.6fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 88px;
+  padding: 14px 20px;
+  border-top: 1px solid #e9edf3;
+}
+
+.staff-avatar {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 10px;
+  color: #175cd3;
+  background: #edf4ff;
+  font-weight: 750;
+}
+
+.staff-identity {
+  display: grid;
+  min-width: 0;
+}
+
+.staff-identity strong,
+.staff-identity span,
+.staff-identity small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.staff-identity strong {
+  color: #27364b;
+  font-size: 0.86rem;
+}
+
+.staff-identity span {
+  color: #69778b;
+  font-size: 0.76rem;
+}
+
+.staff-identity small {
+  margin-top: 3px;
+  color: #98a2b3;
+  font-size: 0.66rem;
+}
+
+.staff-edit-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr minmax(160px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.staff-row > form:last-child button {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.staff-deactivate {
+  color: #a4342a;
+  background: #fff0ee;
+}
+
+.staff-activate {
+  color: #176a4d;
+  background: #eaf7f0;
+}
+
+@media (max-width: 1350px) {
+  .staff-create-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .staff-create-form button {
+    grid-column: 1 / -1;
+  }
+
+  .staff-row {
+    grid-template-columns: 46px minmax(180px, 1fr) auto;
+  }
+
+  .staff-edit-form {
+    grid-column: 2 / -1;
+  }
+
+  .staff-row > form:last-child {
+    grid-column: 2 / -1;
+    justify-self: end;
+  }
+}
+
+@media (max-width: 760px) {
+  .staff-create-form,
+  .staff-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-create-form button,
+  .staff-edit-form button {
+    grid-column: auto;
+  }
+
+  .staff-row {
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+    padding-inline: 14px;
+  }
+
+  .staff-edit-form,
+  .staff-row > form:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .staff-row > form:last-child {
+    justify-self: stretch;
+  }
+
+  .staff-row > form:last-child button {
+    width: 100%;
+  }
+}
+
 /* Checkout desk */
 .checkout-workspace {
   display: grid;

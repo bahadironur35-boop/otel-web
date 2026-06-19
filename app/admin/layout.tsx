@@ -4,6 +4,6 @@ import { requireAdmin } from "@/lib/auth";
 export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  await requireAdmin();
-  return <AdminChrome>{children}</AdminChrome>;
+  const user = await requireAdmin();
+  return <AdminChrome user={user}>{children}</AdminChrome>;
 }

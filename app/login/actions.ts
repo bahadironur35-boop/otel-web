@@ -7,11 +7,12 @@ export async function loginAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  if (!(await validateCredentials(email, password))) {
+  const user = await validateCredentials(email, password);
+  if (!user) {
     redirect("/login?error=invalid");
   }
 
-  await createSession();
+  await createSession(user);
   redirect("/admin");
 }
 

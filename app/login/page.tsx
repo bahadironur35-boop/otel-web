@@ -19,11 +19,11 @@ export default async function LoginPage({
         </Link>
         <p className="section-kicker">Yönetim girişi</p>
         <h1>Panel erişimi</h1>
-        <p>Rezervasyon, oda, görev ve kanal yönetimi için giriş yap.</p>
+        <p>Size atanmış personel hesabı veya sistem yöneticisi hesabıyla giriş yapın.</p>
 
         {!configured ? (
           <div className="notice danger">
-            Admin girişi için Vercel Environment Variables alanına ADMIN_EMAIL, ADMIN_PASSWORD ve SESSION_SECRET ekle.
+            Giriş için personel veritabanı ve SESSION_SECRET ya da yedek yönetici olarak ADMIN_EMAIL, ADMIN_PASSWORD ve SESSION_SECRET ayarlanmalıdır.
           </div>
         ) : null}
         {params.error ? <div className="notice danger">E-posta veya şifre hatalı.</div> : null}

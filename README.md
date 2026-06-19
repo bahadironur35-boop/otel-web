@@ -13,6 +13,7 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 - Channex staging bağlantısı, stok senkronizasyonu ve webhook giriş noktası
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
 - Tarih aralığına göre gelir, tahsilat, doluluk, ADR, RevPAR, kanal ve oda tipi raporları
+- Ayrı personel hesapları, roller ve güvenli şifre doğrulaması
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
 ## Ürün yol haritası
@@ -68,6 +69,26 @@ SESSION_SECRET="uzun-rastgele-bir-değer"
 ```
 
 `SESSION_SECRET` için uzun, tahmin edilmesi zor bir metin kullanın.
+
+### Personel hesapları ve roller
+
+Personel hesapları için Supabase SQL Editor'da:
+
+```text
+supabase/staff-users-migration.sql
+```
+
+dosyasını çalıştırın. Sonrasında ortam değişkenindeki yönetici hesabıyla giriş yapıp `/admin/users` ekranından sistem yöneticisi, otel yöneticisi, resepsiyon, housekeeping ve muhasebe hesapları oluşturabilirsiniz.
+
+Şifreler veritabanında açık metin tutulmaz. Salt eklenmiş `scrypt` özeti kullanılır. `ADMIN_EMAIL` ve `ADMIN_PASSWORD` hesabı ilk kurulum ve acil erişim için yedek yönetici olarak çalışmaya devam eder.
+
+Temel erişim dağılımı:
+
+- Sistem yöneticisi: tüm modüller ve personel yönetimi
+- Otel yöneticisi: tüm operasyon modülleri; sistem yöneticisi hesaplarını değiştiremez
+- Resepsiyon: rezervasyon, misafir, folyo, çıkış, tahsilat, oda ve görevler
+- Housekeeping: oda ve görev operasyonları
+- Muhasebe: folyo, tahsilat, ödeme ayarları ve raporlar
 
 ## E-posta bildirimleri
 
