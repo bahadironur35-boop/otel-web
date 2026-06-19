@@ -221,6 +221,83 @@ export async function deactivateRoom(formData: FormData) {
   redirect("/admin/rooms?deactivated=1");
 }
 
+export async function createPhysicalRoom(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/rooms?demo=1");
+  }
+
+  const hotelId = await getDemoHotelId();
+  const roomTypeId = String(formData.get("roomTypeId") ?? "");
+  const number = String(formData.get("number") ?? "").trim();
+  const floor = String(formData.get("floor") ?? "").trim();
+
+  if (!roomTypeId || !number) {
+    redirect("/admin/rooms?error=physical-room");
+  }
+
+  try {
+    await prisma.physicalRoom.create({
+      data: {
+        hotelId,
+        roomTypeId,
+        number,
+        floor: floor || null,
+        status: PhysicalRoomStatus.READY
+      }
+    });
+  } catch {
+    redirect("/admin/rooms?error=duplicate-room");
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/guests");
+  revalidatePath("/admin/rooms");
+  redirect("/admin/rooms?physicalCreated=1");
+}
+
+export async function updatePhysicalRoomStatus(formData: FormData) {
+  if (!hasDatabase) {
+    redirect("/admin/rooms?demo=1");
+  }
+
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "") as PhysicalRoomStatus;
+  const allowedStatuses = new Set<PhysicalRoomStatus>([
+    PhysicalRoomStatus.READY,
+    PhysicalRoomStatus.CLEANING,
+    PhysicalRoomStatus.MAINTENANCE,
+    PhysicalRoomStatus.OUT_OF_SERVICE
+  ]);
+
+  if (!id || !allowedStatuses.has(status)) {
+    redirect("/admin/rooms?error=physical-room");
+  }
+
+  const room = await prisma.physicalRoom.findUnique({
+    where: { id },
+    include: {
+      stays: {
+        where: { status: StayStatus.CHECKED_IN },
+        take: 1
+      }
+    }
+  });
+
+  if (!room || room.stays.length > 0) {
+    redirect("/admin/rooms?error=occupied-room");
+  }
+
+  await prisma.physicalRoom.update({
+    where: { id },
+    data: { status }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/guests");
+  revalidatePath("/admin/rooms");
+  redirect("/admin/rooms?physicalUpdated=1");
+}
+
 export async function createTask(formData: FormData) {
   if (!hasDatabase) {
     redirect("/admin/tasks?demo=1");
@@ -799,7 +876,10 @@ export async function checkOutGuest(formData: FormData) {
 
   if (!stayId) redirect("/admin/guests?result=error");
 
-  const stay = await prisma.stay.findUnique({ where: { id: stayId } });
+  const stay = await prisma.stay.findUnique({
+    where: { id: stayId },
+    include: { physicalRoom: true }
+  });
   if (!stay || stay.status !== StayStatus.CHECKED_IN) {
     redirect("/admin/guests?result=error");
   }
@@ -812,6 +892,15 @@ export async function checkOutGuest(formData: FormData) {
     prisma.physicalRoom.update({
       where: { id: stay.physicalRoomId },
       data: { status: PhysicalRoomStatus.CLEANING }
+    }),
+    prisma.task.create({
+      data: {
+        hotelId: stay.hotelId,
+        title: `Oda ${stay.physicalRoom.number} çıkış temizliği`,
+        owner: "Housekeeping",
+        dueAt: new Date(Date.now() + 60 * 60 * 1000),
+        priority: TaskPriority.HIGH
+      }
     })
   ]);
 

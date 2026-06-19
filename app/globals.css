@@ -3045,3 +3045,229 @@ body:has(.admin-shell) {
     grid-template-columns: 1fr;
   }
 }
+
+/* Physical room operations */
+.room-status-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.room-status-summary article {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 72px;
+  padding: 12px 16px;
+  border: 1px solid #dfe6ef;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.room-status-summary svg {
+  grid-row: span 2;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border-radius: 6px;
+  color: #1767d2;
+  background: #edf5ff;
+}
+
+.room-status-summary span {
+  color: #68768a;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.room-status-summary strong {
+  grid-column: 2;
+  color: #132238;
+  font-size: 1.35rem;
+}
+
+.room-board-panel,
+.physical-room-create-panel {
+  margin-bottom: 16px;
+}
+
+.physical-room-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+}
+
+.physical-room-card {
+  display: grid;
+  min-height: 190px;
+  padding: 15px;
+  border: 1px solid #dce4ee;
+  border-top: 4px solid #1767d2;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.physical-room-card.status-occupied {
+  border-top-color: #7a4cc2;
+  background: #fbf9ff;
+}
+
+.physical-room-card.status-cleaning {
+  border-top-color: #d69717;
+  background: #fffaf0;
+}
+
+.physical-room-card.status-maintenance,
+.physical-room-card.status-out_of_service {
+  border-top-color: #b44236;
+  background: #fff7f5;
+}
+
+.physical-room-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.physical-room-card-top > span {
+  color: #7a8798;
+  font-size: 0.72rem;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+
+.physical-room-card-top > b {
+  padding: 5px 8px;
+  border-radius: 4px;
+  color: #1759a8;
+  background: #eaf3fd;
+  font-size: 0.72rem;
+}
+
+.physical-room-card > strong {
+  align-self: end;
+  margin-top: 12px;
+  color: #132238;
+  font-size: 2rem;
+}
+
+.physical-room-card > small {
+  margin: 4px 0 14px;
+  color: #68768a;
+}
+
+.physical-room-card > a {
+  display: grid;
+  align-self: end;
+  min-height: 54px;
+  padding: 9px 11px;
+  border-radius: 5px;
+  color: #4e2c91;
+  background: #f0eafd;
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.physical-room-card > a span {
+  font-size: 0.72rem;
+  font-weight: 450;
+}
+
+.physical-room-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  align-self: end;
+}
+
+.physical-room-actions button {
+  width: 100%;
+  min-height: 44px;
+  padding: 4px;
+  border: 1px solid #d6e0eb;
+  border-radius: 5px;
+  color: #34445a;
+  background: #f7f9fc;
+  font-size: 0.72rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.physical-room-actions button:hover {
+  border-color: #1767d2;
+  color: #1759a8;
+  background: #edf5ff;
+}
+
+.physical-room-create-form {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.7fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 18px;
+}
+
+.physical-room-create-form label {
+  display: grid;
+  gap: 7px;
+  color: #536174;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.physical-room-create-form input,
+.physical-room-create-form select {
+  min-height: 46px;
+  padding: 0 12px;
+  border: 1px solid #d9e1eb;
+  border-radius: 6px;
+  color: #17243a;
+  background: #fff;
+}
+
+.physical-room-create-form button {
+  min-height: 46px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: #1767d2;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.room-type-heading {
+  margin-top: 28px;
+}
+
+@media (max-width: 1200px) {
+  .room-status-summary,
+  .physical-room-board {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .room-status-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .physical-room-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px;
+  }
+
+  .physical-room-create-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 460px) {
+  .physical-room-board {
+    grid-template-columns: 1fr;
+  }
+}
