@@ -103,6 +103,7 @@ Sidebar navigasyon sırası iş akışını izlemelidir:
 10. Kanallar
 11. Uyumluluk
 12. Personel
+13. İşlem geçmişi
 
 ### Header
 
@@ -333,6 +334,7 @@ Tasarım sistemi değişikliği yapılırken:
 
 ### 2026-06-19
 
+- Denetim geçmişi ekranı için filtre ve aktivite satırı kalıpları eklendi.
 - Personel ve rol yönetimi ekranı için kullanıcı satırı, avatar ve hesap durumu kalıpları eklendi.
 - Yönetim raporları ekranı için metrik, sıralama, ilerleme ve CSS grafik kalıpları eklendi.
 - StayOS admin paneli premium B2B SaaS tasarım diline geçirildi.

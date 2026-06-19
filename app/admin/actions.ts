@@ -19,6 +19,7 @@ import {
   TaskPriority
 } from "@prisma/client";
 import { getRoomAvailability, parseStayDates } from "@/lib/availability";
+import { recordAuditEvent } from "@/lib/audit";
 import { testChannexConnection } from "@/lib/channex";
 import { syncInventoryToChannex } from "@/lib/channex-sync";
 import { hasDatabase, prisma } from "@/lib/prisma";
@@ -70,7 +71,7 @@ export async function createReservation(formData: FormData) {
     redirect("/admin/reservations?error=unavailable");
   }
 
-  await prisma.reservation.create({
+  const reservation = await prisma.reservation.create({
     data: {
       hotelId,
       roomTypeId,
@@ -83,6 +84,14 @@ export async function createReservation(formData: FormData) {
       status: ReservationStatus.NEW,
       totalAmount
     }
+  });
+  await recordAuditEvent({
+    hotelId,
+    action: "RESERVATION_CREATED",
+    entityType: "Reservation",
+    entityId: reservation.id,
+    description: `${guestName} adına rezervasyon oluşturuldu.`,
+    metadata: { roomTypeId, channel, totalAmount, checkIn: checkInValue, checkOut: checkOutValue }
   });
 
   revalidatePath("/admin");
@@ -101,9 +110,16 @@ export async function confirmReservation(formData: FormData) {
     redirect("/admin/reservations?error=missing-fields");
   }
 
-  await prisma.reservation.update({
+  const reservation = await prisma.reservation.update({
     where: { id },
     data: { status: ReservationStatus.CONFIRMED }
+  });
+  await recordAuditEvent({
+    hotelId: reservation.hotelId,
+    action: "RESERVATION_CONFIRMED",
+    entityType: "Reservation",
+    entityId: reservation.id,
+    description: `${reservation.guestName} rezervasyonu onaylandı.`
   });
 
   revalidatePath("/admin");
@@ -122,9 +138,16 @@ export async function cancelReservation(formData: FormData) {
     redirect("/admin/reservations?error=missing-fields");
   }
 
-  await prisma.reservation.update({
+  const reservation = await prisma.reservation.update({
     where: { id },
     data: { status: ReservationStatus.CANCELLED }
+  });
+  await recordAuditEvent({
+    hotelId: reservation.hotelId,
+    action: "RESERVATION_CANCELLED",
+    entityType: "Reservation",
+    entityId: reservation.id,
+    description: `${reservation.guestName} rezervasyonu iptal edildi.`
   });
 
   revalidatePath("/admin");
@@ -288,9 +311,17 @@ export async function updatePhysicalRoomStatus(formData: FormData) {
     redirect("/admin/rooms?error=occupied-room");
   }
 
-  await prisma.physicalRoom.update({
+  const updatedRoom = await prisma.physicalRoom.update({
     where: { id },
     data: { status }
+  });
+  await recordAuditEvent({
+    hotelId: updatedRoom.hotelId,
+    action: "ROOM_STATUS_UPDATED",
+    entityType: "PhysicalRoom",
+    entityId: updatedRoom.id,
+    description: `Oda ${updatedRoom.number} durumu güncellendi.`,
+    metadata: { status }
   });
 
   revalidatePath("/admin");
@@ -667,7 +698,6 @@ export async function runConnectionSync(formData: FormData) {
       }
     })
   ]);
-
   revalidatePath("/admin/channels");
   redirect(`/admin/channels?workspace=${success ? "sync-success" : "sync-error"}`);
 }
@@ -750,6 +780,14 @@ export async function createPaymentRequest(formData: FormData) {
       data: { status: ReservationStatus.PAYMENT_PENDING }
     })
   ]);
+  await recordAuditEvent({
+    hotelId: reservation.hotelId,
+    action: "PAYMENT_REQUEST_CREATED",
+    entityType: "Reservation",
+    entityId: reservation.id,
+    description: `${reservation.guestName} için tahsilat talebi oluşturuldu.`,
+    metadata: { provider, amount: remainingAmount, paymentLink: Boolean(paymentLink) }
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/payments");
@@ -797,6 +835,14 @@ export async function updatePaymentStatus(formData: FormData) {
       }
     })
   ]);
+  await recordAuditEvent({
+    hotelId: payment.hotelId,
+    action: "PAYMENT_STATUS_UPDATED",
+    entityType: "Payment",
+    entityId: payment.id,
+    description: `Tahsilat durumu ${status} olarak güncellendi.`,
+    metadata: { previousStatus: payment.status, status, externalTransaction: externalTransaction || null }
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/payments");
@@ -891,6 +937,14 @@ export async function checkInGuest(formData: FormData) {
       }
     })
   ]);
+  await recordAuditEvent({
+    hotelId: reservation.hotelId,
+    action: "GUEST_CHECKED_IN",
+    entityType: "Stay",
+    entityId: reservation.id,
+    description: `${guest.fullName}, ${room.number} numaralı odaya check-in yaptı.`,
+    metadata: { guestId: guest.id, reservationId: reservation.id, physicalRoomId }
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/guests");
@@ -974,6 +1028,14 @@ export async function finalizeGuestCheckout(formData: FormData) {
       }
     });
   });
+  await recordAuditEvent({
+    hotelId: stay.hotelId,
+    action: "GUEST_CHECKED_OUT",
+    entityType: "Stay",
+    entityId: stay.id,
+    description: `Oda ${stay.physicalRoom.number} check-out işlemi tamamlandı.`,
+    metadata: { guestId: stay.guestId, reservationId: stay.reservationId, balance, paymentMethod }
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/checkouts");
@@ -1001,7 +1063,7 @@ export async function addFolioItem(formData: FormData) {
     redirect("/admin/folios?result=error");
   }
 
-  await prisma.folioItem.create({
+  const item = await prisma.folioItem.create({
     data: {
       hotelId: folio.hotelId,
       folioId,
@@ -1011,6 +1073,14 @@ export async function addFolioItem(formData: FormData) {
       unitPrice,
       amount: quantity * unitPrice
     }
+  });
+  await recordAuditEvent({
+    hotelId: folio.hotelId,
+    action: "FOLIO_ITEM_ADDED",
+    entityType: "FolioItem",
+    entityId: item.id,
+    description: `${description} folyo kalemi eklendi.`,
+    metadata: { folioId, category, quantity, unitPrice, amount: quantity * unitPrice }
   });
 
   revalidatePath("/admin/folios");
@@ -1026,7 +1096,15 @@ export async function removeFolioItem(formData: FormData) {
     redirect("/admin/folios?result=error");
   }
 
-  await prisma.folioItem.delete({ where: { id } });
+  const item = await prisma.folioItem.delete({ where: { id } });
+  await recordAuditEvent({
+    hotelId: item.hotelId,
+    action: "FOLIO_ITEM_REMOVED",
+    entityType: "FolioItem",
+    entityId: item.id,
+    description: `${item.description} folyo kalemi kaldırıldı.`,
+    metadata: { folioId, amount: item.amount }
+  });
 
   revalidatePath("/admin/folios");
   revalidatePath("/admin/payments");

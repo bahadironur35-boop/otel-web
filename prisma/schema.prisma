@@ -157,6 +157,7 @@ model Hotel {
   folios        Folio[]
   folioItems    FolioItem[]
   staffUsers    StaffUser[]
+  auditLogs     AuditLog[]
 }
 
 model RoomType {
@@ -472,4 +473,25 @@ model StaffUser {
 
   @@unique([hotelId, email])
   @@index([hotelId, role, active])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  hotelId     String
+  hotel       Hotel    @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  actorId     String?
+  actorName   String
+  actorEmail  String
+  actorRole   String
+  action      String
+  entityType  String
+  entityId    String?
+  description String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([hotelId, createdAt])
+  @@index([hotelId, actorId])
+  @@index([hotelId, action])
+  @@index([hotelId, entityType])
 }

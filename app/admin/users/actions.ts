@@ -4,6 +4,7 @@ import { StaffRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { hashPassword, requireRoles } from "@/lib/auth";
+import { recordAuditEvent } from "@/lib/audit";
 import { prisma } from "@/lib/prisma";
 
 const managerRoles = [StaffRole.ADMIN, StaffRole.MANAGER];
@@ -30,7 +31,7 @@ export async function createStaffUser(formData: FormData) {
   }
 
   try {
-    await prisma.staffUser.create({
+    const createdUser = await prisma.staffUser.create({
       data: {
         hotelId,
         fullName,
@@ -38,6 +39,14 @@ export async function createStaffUser(formData: FormData) {
         passwordHash: await hashPassword(password),
         role
       }
+    });
+    await recordAuditEvent({
+      hotelId,
+      action: "STAFF_USER_CREATED",
+      entityType: "StaffUser",
+      entityId: createdUser.id,
+      description: `${createdUser.fullName} personel hesabı oluşturuldu.`,
+      metadata: { email: createdUser.email, role: createdUser.role }
     });
   } catch {
     redirect("/admin/users?result=duplicate");
@@ -83,6 +92,14 @@ export async function updateStaffUser(formData: FormData) {
   }
 
   await prisma.staffUser.update({ where: { id }, data });
+  await recordAuditEvent({
+    hotelId: targetUser.hotelId,
+    action: "STAFF_USER_UPDATED",
+    entityType: "StaffUser",
+    entityId: id,
+    description: `${fullName} personel hesabı güncellendi.`,
+    metadata: { previousRole: targetUser.role, role, passwordChanged: Boolean(password) }
+  });
   revalidatePath("/admin/users");
   redirect("/admin/users?result=updated");
 }
@@ -101,7 +118,14 @@ export async function toggleStaffUser(formData: FormData) {
     redirect("/admin/users?result=forbidden");
   }
 
-  await prisma.staffUser.update({ where: { id }, data: { active } });
+  const updatedUser = await prisma.staffUser.update({ where: { id }, data: { active } });
+  await recordAuditEvent({
+    hotelId: updatedUser.hotelId,
+    action: active ? "STAFF_USER_ACTIVATED" : "STAFF_USER_DEACTIVATED",
+    entityType: "StaffUser",
+    entityId: updatedUser.id,
+    description: `${updatedUser.fullName} personel hesabı ${active ? "etkinleştirildi" : "pasifleştirildi"}.`
+  });
   revalidatePath("/admin/users");
   redirect(`/admin/users?result=${active ? "activated" : "deactivated"}`);
 }

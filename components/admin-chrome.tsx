@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Activity,
   BedDouble,
   BarChart3,
   CalendarDays,
@@ -44,7 +45,8 @@ const navItems: Array<{
   { label: "Raporlar", href: "/admin/reports", icon: BarChart3, roles: ["ADMIN", "MANAGER", "ACCOUNTING"] },
   { label: "Kanallar", href: "/admin/channels", icon: Network, roles: ["ADMIN", "MANAGER"] },
   { label: "Uyumluluk", href: "/admin/compliance", icon: ShieldCheck, roles: ["ADMIN", "MANAGER"] },
-  { label: "Personel", href: "/admin/users", icon: UserCog, roles: ["ADMIN", "MANAGER"] }
+  { label: "Personel", href: "/admin/users", icon: UserCog, roles: ["ADMIN", "MANAGER"] },
+  { label: "İşlem Geçmişi", href: "/admin/activity", icon: Activity, roles: ["ADMIN", "MANAGER"] }
 ];
 
 const moduleContexts = [
@@ -60,6 +62,7 @@ const moduleContexts = [
   { path: "/admin/channels", title: "Kanal Yönetimi", subtitle: "OTA bağlantıları ve senkronizasyon" },
   { path: "/admin/compliance", title: "Uyumluluk Merkezi", subtitle: "Yasal ve operasyonel kontrol listesi" },
   { path: "/admin/users", title: "Personel Yönetimi", subtitle: "Kullanıcı hesapları, roller ve erişim" },
+  { path: "/admin/activity", title: "İşlem Geçmişi", subtitle: "Personel hareketleri ve denetim kayıtları" },
   { path: "/admin", title: "Operasyon Özeti", subtitle: "StayOS otel yönetim merkezi" }
 ];
 

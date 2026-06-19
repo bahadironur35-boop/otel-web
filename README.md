@@ -14,6 +14,7 @@ StayOS; otel web sitesi, rezervasyon motoru, operasyon paneli, otomasyon akışl
 - Booking, Expedia, Airbnb, Agoda gibi OTA kanalları için entegrasyon yaklaşımı
 - Tarih aralığına göre gelir, tahsilat, doluluk, ADR, RevPAR, kanal ve oda tipi raporları
 - Ayrı personel hesapları, roller ve güvenli şifre doğrulaması
+- Personel işlemleri için filtrelenebilir denetim ve hareket geçmişi
 - Vercel üzerinde Next.js uygulaması olarak yayınlanabilir yapı
 
 ## Ürün yol haritası
@@ -89,6 +90,16 @@ Temel erişim dağılımı:
 - Resepsiyon: rezervasyon, misafir, folyo, çıkış, tahsilat, oda ve görevler
 - Housekeeping: oda ve görev operasyonları
 - Muhasebe: folyo, tahsilat, ödeme ayarları ve raporlar
+
+### İşlem geçmişi ve denetim
+
+Denetim kayıtları için Supabase SQL Editor'da:
+
+```text
+supabase/audit-logs-migration.sql
+```
+
+dosyasını çalıştırın. `/admin/activity` ekranı rezervasyon, oda, check-in/out, tahsilat, folyo ve personel işlemlerini kullanıcı, işlem türü ve tarih aralığına göre filtreler. Bu ekran yalnızca sistem yöneticisi ve otel yöneticisi rollerine açıktır.
 
 ## E-posta bildirimleri
 
