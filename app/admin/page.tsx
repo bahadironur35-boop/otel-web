@@ -7,7 +7,8 @@ import {
   CreditCard,
   DoorOpen,
   Network,
-  UserRoundCheck
+  UserRoundCheck,
+  UsersRound
 } from "lucide-react";
 import { getHotelData } from "@/lib/data";
 import { getDashboardMetrics } from "@/lib/dashboard";
@@ -96,6 +97,11 @@ export default async function AdminHomePage() {
               <CalendarPlus />
               <strong>Rezervasyon</strong>
               <span>Yeni kayıt oluştur</span>
+            </Link>
+            <Link href="/admin/guests">
+              <UsersRound />
+              <strong>Check-in</strong>
+              <span>Misafir ve oda ata</span>
             </Link>
             <Link href="/admin/payments">
               <CircleDollarSign />

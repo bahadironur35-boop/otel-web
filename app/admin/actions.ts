@@ -6,12 +6,15 @@ import {
   ChannelStatus,
   ComplianceStatus,
   IntegrationStatus,
+  GuestStatus,
   PaymentProvider,
   PaymentStatus,
+  PhysicalRoomStatus,
   ReservationStatus,
   RoomStatus,
   SyncDirection,
   SyncState,
+  StayStatus,
   TaskPriority
 } from "@prisma/client";
 import { getRoomAvailability, parseStayDates } from "@/lib/availability";
@@ -704,4 +707,116 @@ export async function updatePaymentStatus(formData: FormData) {
   revalidatePath("/admin/payments");
   revalidatePath("/admin/reservations");
   redirect("/admin/payments?result=updated");
+}
+
+export async function checkInGuest(formData: FormData) {
+  const reservationId = String(formData.get("reservationId") ?? "");
+  const physicalRoomId = String(formData.get("physicalRoomId") ?? "");
+  const fullName = String(formData.get("fullName") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const nationality = String(formData.get("nationality") ?? "").trim();
+  const identityNumber = String(formData.get("identityNumber") ?? "").trim();
+  const passportNumber = String(formData.get("passportNumber") ?? "").trim();
+  const guestStatus = String(formData.get("guestStatus") ?? GuestStatus.STANDARD) as GuestStatus;
+  const notes = String(formData.get("notes") ?? "").trim();
+
+  if (!reservationId || !physicalRoomId || !fullName) {
+    redirect("/admin/guests?result=error");
+  }
+
+  const reservation = await prisma.reservation.findUnique({
+    where: { id: reservationId },
+    include: { stay: true }
+  });
+  const room = await prisma.physicalRoom.findUnique({ where: { id: physicalRoomId } });
+
+  if (!reservation || reservation.stay || !room || room.status !== PhysicalRoomStatus.READY) {
+    redirect("/admin/guests?result=unavailable");
+  }
+
+  const guest = reservation.guestId
+    ? await prisma.guest.update({
+        where: { id: reservation.guestId },
+        data: {
+          fullName,
+          email: email || null,
+          phone: phone || null,
+          nationality: nationality || null,
+          identityNumber: identityNumber || null,
+          passportNumber: passportNumber || null,
+          status: guestStatus,
+          notes: notes || null
+        }
+      })
+    : await prisma.guest.create({
+        data: {
+          hotelId: reservation.hotelId,
+          fullName,
+          email: email || null,
+          phone: phone || null,
+          nationality: nationality || null,
+          identityNumber: identityNumber || null,
+          passportNumber: passportNumber || null,
+          status: guestStatus,
+          notes: notes || null
+        }
+      });
+
+  await prisma.$transaction([
+    prisma.reservation.update({
+      where: { id: reservation.id },
+      data: { guestId: guest.id, status: "CONFIRMED" }
+    }),
+    prisma.stay.create({
+      data: {
+        hotelId: reservation.hotelId,
+        reservationId: reservation.id,
+        guestId: guest.id,
+        physicalRoomId,
+        status: StayStatus.CHECKED_IN,
+        checkedInAt: new Date(),
+        expectedCheckIn: reservation.checkIn,
+        expectedCheckOut: reservation.checkOut,
+        adults: reservation.guests,
+        notes: notes || null
+      }
+    }),
+    prisma.physicalRoom.update({
+      where: { id: physicalRoomId },
+      data: { status: PhysicalRoomStatus.OCCUPIED }
+    })
+  ]);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/guests");
+  revalidatePath("/admin/rooms");
+  redirect(`/admin/guests/${guest.id}?result=checked-in`);
+}
+
+export async function checkOutGuest(formData: FormData) {
+  const stayId = String(formData.get("stayId") ?? "");
+
+  if (!stayId) redirect("/admin/guests?result=error");
+
+  const stay = await prisma.stay.findUnique({ where: { id: stayId } });
+  if (!stay || stay.status !== StayStatus.CHECKED_IN) {
+    redirect("/admin/guests?result=error");
+  }
+
+  await prisma.$transaction([
+    prisma.stay.update({
+      where: { id: stayId },
+      data: { status: StayStatus.CHECKED_OUT, checkedOutAt: new Date() }
+    }),
+    prisma.physicalRoom.update({
+      where: { id: stay.physicalRoomId },
+      data: { status: PhysicalRoomStatus.CLEANING }
+    })
+  ]);
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/guests");
+  revalidatePath("/admin/rooms");
+  redirect(`/admin/guests/${stay.guestId}?result=checked-out`);
 }

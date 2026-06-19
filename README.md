@@ -138,6 +138,17 @@ Webhook adresleri:
 
 Ayrıntılı mimari: `docs/odeme-mimarisi.md`
 
+## Misafir ve check-in modülü
+
+Misafir profilleri, fiziksel oda numaraları, check-in ve check-out işlemleri için Supabase SQL Editor'da sırasıyla:
+
+```text
+supabase/guests-checkin-migration.sql
+supabase/guests-checkin-seed.sql
+```
+
+dosyalarını çalıştırın. Ardından `/admin/guests` ekranından rezervasyon seçip hazır oda atayabilir, misafir kaydı oluşturabilir ve konaklama detayından check-out yapabilirsiniz.
+
 ## GitHub'a gönderme
 
 ```bash

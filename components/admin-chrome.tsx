@@ -15,7 +15,8 @@ import {
   LogOut,
   Network,
   Settings2,
-  ShieldCheck
+  ShieldCheck,
+  UsersRound
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { logoutAction } from "@/app/login/actions";
@@ -23,6 +24,7 @@ import { logoutAction } from "@/app/login/actions";
 const navItems = [
   { label: "Operasyon Özeti", href: "/admin", icon: Gauge },
   { label: "Rezervasyonlar", href: "/admin/reservations", icon: CalendarDays },
+  { label: "Misafirler", href: "/admin/guests", icon: UsersRound },
   { label: "Tahsilatlar", href: "/admin/payments", icon: CircleDollarSign },
   { label: "Odalar", href: "/admin/rooms", icon: BedDouble },
   { label: "Görevler", href: "/admin/tasks", icon: CheckSquare },

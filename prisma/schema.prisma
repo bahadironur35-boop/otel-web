@@ -86,40 +86,66 @@ enum PaymentStatus {
   CANCELLED
 }
 
+enum GuestStatus {
+  STANDARD
+  VIP
+  WATCHLIST
+}
+
+enum StayStatus {
+  RESERVED
+  CHECKED_IN
+  CHECKED_OUT
+  NO_SHOW
+  CANCELLED
+}
+
+enum PhysicalRoomStatus {
+  READY
+  OCCUPIED
+  CLEANING
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
 model Hotel {
-  id           String                @id @default(cuid())
-  name         String
-  slug         String                @unique
-  city         String
-  country      String
-  createdAt    DateTime              @default(now())
-  updatedAt    DateTime              @updatedAt
-  rooms        RoomType[]
-  reservations Reservation[]
-  tasks        Task[]
-  channels     Channel[]
-  providers    IntegrationProvider[]
-  connections  ChannelConnection[]
-  roomMappings RoomMapping[]
-  syncLogs     SyncLog[]
-  compliance   ComplianceItem[]
-  payments     Payment[]
+  id            String                @id @default(cuid())
+  name          String
+  slug          String                @unique
+  city          String
+  country       String
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  rooms         RoomType[]
+  reservations  Reservation[]
+  tasks         Task[]
+  channels      Channel[]
+  providers     IntegrationProvider[]
+  connections   ChannelConnection[]
+  roomMappings  RoomMapping[]
+  syncLogs      SyncLog[]
+  compliance    ComplianceItem[]
+  payments      Payment[]
+  guests        Guest[]
+  physicalRooms PhysicalRoom[]
+  stays         Stay[]
 }
 
 model RoomType {
-  id           String        @id @default(cuid())
-  hotelId      String
-  hotel        Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade)
-  name         String
-  capacity     String
-  nightlyRate  Int
-  currency     String        @default("TRY")
-  status       RoomStatus    @default(READY)
-  inventory    Int           @default(1)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  reservations Reservation[]
-  roomMappings RoomMapping[]
+  id            String         @id @default(cuid())
+  hotelId       String
+  hotel         Hotel          @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  name          String
+  capacity      String
+  nightlyRate   Int
+  currency      String         @default("TRY")
+  status        RoomStatus     @default(READY)
+  inventory     Int            @default(1)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  reservations  Reservation[]
+  roomMappings  RoomMapping[]
+  physicalRooms PhysicalRoom[]
 }
 
 model Reservation {
@@ -141,6 +167,9 @@ model Reservation {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   payments    Payment[]
+  guestId     String?
+  guest       Guest?            @relation(fields: [guestId], references: [id], onDelete: SetNull)
+  stay        Stay?
 }
 
 model Task {
@@ -297,4 +326,68 @@ model Payment {
 
   @@index([hotelId, status])
   @@index([reservationId, createdAt])
+}
+
+model Guest {
+  id             String        @id @default(cuid())
+  hotelId        String
+  hotel          Hotel         @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  fullName       String
+  email          String?
+  phone          String?
+  nationality    String?
+  identityNumber String?
+  passportNumber String?
+  status         GuestStatus   @default(STANDARD)
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  reservations   Reservation[]
+  stays          Stay[]
+
+  @@index([hotelId, fullName])
+  @@index([hotelId, email])
+}
+
+model PhysicalRoom {
+  id         String             @id @default(cuid())
+  hotelId    String
+  hotel      Hotel              @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  roomTypeId String
+  roomType   RoomType           @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  number     String
+  floor      String?
+  status     PhysicalRoomStatus @default(READY)
+  notes      String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  stays      Stay[]
+
+  @@unique([hotelId, number])
+  @@index([roomTypeId, status])
+}
+
+model Stay {
+  id               String       @id @default(cuid())
+  hotelId          String
+  hotel            Hotel        @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  reservationId    String       @unique
+  reservation      Reservation  @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  guestId          String
+  guest            Guest        @relation(fields: [guestId], references: [id], onDelete: Restrict)
+  physicalRoomId   String
+  physicalRoom     PhysicalRoom @relation(fields: [physicalRoomId], references: [id], onDelete: Restrict)
+  status           StayStatus   @default(RESERVED)
+  checkedInAt      DateTime?
+  checkedOutAt     DateTime?
+  expectedCheckIn  DateTime
+  expectedCheckOut DateTime
+  adults           Int          @default(1)
+  children         Int          @default(0)
+  notes            String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([hotelId, status])
+  @@index([physicalRoomId, status])
 }
