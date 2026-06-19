@@ -9,6 +9,8 @@ type ReservationOption = {
   guestName: string;
   roomName: string;
   amountLabel: string;
+  balance: number;
+  balanceLabel: string;
   latestPaymentStatus: string | null;
 };
 
@@ -37,7 +39,7 @@ export function PaymentRequestPanel({
   schemaReady: boolean;
 }) {
   const firstCollectibleReservation = reservations.find(
-    (reservation) => reservation.latestPaymentStatus !== "PAID"
+    (reservation) => reservation.balance > 0
   );
   const [selectedId, setSelectedId] = useState(firstCollectibleReservation?.id ?? "");
   const selectedReservation = reservations.find((reservation) => reservation.id === selectedId);
@@ -49,7 +51,7 @@ export function PaymentRequestPanel({
       <div className="touch-reservation-grid" role="listbox" aria-label="Rezervasyon seçimi">
         {reservations.map((reservation) => {
           const selected = reservation.id === selectedId;
-          const paid = reservation.latestPaymentStatus === "PAID";
+          const paid = reservation.balance <= 0;
 
           return (
             <button
@@ -63,7 +65,7 @@ export function PaymentRequestPanel({
             >
               <span className="touch-card-room">{reservation.roomName}</span>
               <strong>{reservation.guestName}</strong>
-              <span className="touch-card-amount">{reservation.amountLabel}</span>
+              <span className="touch-card-amount">{reservation.balanceLabel}</span>
               <span className={`touch-card-status ${paid ? "paid" : ""}`}>
                 {paid ? "Ödendi" : reservation.latestPaymentStatus ? "Tahsilat mevcut" : "Tahsilat bekliyor"}
               </span>
@@ -77,7 +79,7 @@ export function PaymentRequestPanel({
       <div className="payment-control-panel">
         <div className="selected-payment-summary">
           <span>Seçili rezervasyon</span>
-          <strong>{selectedReservation ? `${selectedReservation.guestName} · ${selectedReservation.amountLabel}` : "Seçilmedi"}</strong>
+          <strong>{selectedReservation ? `${selectedReservation.guestName} · Kalan ${selectedReservation.balanceLabel}` : "Seçilmedi"}</strong>
         </div>
         <label>
           Sağlayıcı

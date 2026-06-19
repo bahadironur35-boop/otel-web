@@ -41,6 +41,7 @@ export default async function PaymentsPage({
       {params.result === "created" ? <p className="notice success">Tahsilat talebi oluşturuldu.</p> : null}
       {params.result === "updated" ? <p className="notice success">Tahsilat durumu güncellendi.</p> : null}
       {params.result === "error" ? <p className="notice danger">Tahsilat işlemi tamamlanamadı.</p> : null}
+      {params.result === "already-paid" ? <p className="notice">Bu rezervasyonun güncel folyo bakiyesi tamamen ödenmiş.</p> : null}
       {params.result === "provider-not-configured" ? (
         <p className="notice danger">Seçilen ödeme sağlayıcısı henüz yapılandırılmadı.</p>
       ) : null}

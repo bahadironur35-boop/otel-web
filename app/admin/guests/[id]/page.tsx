@@ -20,7 +20,10 @@ export default async function GuestDetailPage({
     <>
       <div className="admin-topline">
         <div><p className="section-kicker">Misafir profili</p><h2>{guest.fullName}</h2></div>
-        <Link className="admin-action secondary-action" href="/admin/guests">Misafirlere dön</Link>
+        <div className="detail-actions">
+          {activeStay ? <Link className="admin-action" href="/admin/folios">Oda hesabı</Link> : null}
+          <Link className="admin-action secondary-action" href="/admin/guests">Misafirlere dön</Link>
+        </div>
       </div>
       {query.result === "checked-in" ? <p className="notice success">Check-in tamamlandı.</p> : null}
       {query.result === "checked-out" ? <p className="notice success">Check-out tamamlandı; oda temizliğe alındı.</p> : null}

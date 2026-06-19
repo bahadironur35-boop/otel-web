@@ -149,6 +149,16 @@ supabase/guests-checkin-seed.sql
 
 dosyalarını çalıştırın. Ardından `/admin/guests` ekranından rezervasyon seçip hazır oda atayabilir, misafir kaydı oluşturabilir ve konaklama detayından check-out yapabilirsiniz.
 
+## Misafir folyosu ve oda hesabı
+
+Konaklama bedeline minibar, restoran, spa, çamaşırhane ve benzeri harcamaları eklemek için Supabase SQL Editor'da:
+
+```text
+supabase/folios-migration.sql
+```
+
+dosyasını çalıştırın. `/admin/folios` ekranı aktif odaların hesaplarını ve kalan bakiyelerini gösterir. Tahsilat talepleri folyo harcamaları dahil toplam tutar üzerinden oluşturulur.
+
 ## GitHub'a gönderme
 
 ```bash

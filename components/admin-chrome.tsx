@@ -14,6 +14,7 @@ import {
   Hotel,
   LogOut,
   Network,
+  ReceiptText,
   Settings2,
   ShieldCheck,
   UsersRound
@@ -25,6 +26,7 @@ const navItems = [
   { label: "Operasyon Özeti", href: "/admin", icon: Gauge },
   { label: "Rezervasyonlar", href: "/admin/reservations", icon: CalendarDays },
   { label: "Misafirler", href: "/admin/guests", icon: UsersRound },
+  { label: "Oda Hesapları", href: "/admin/folios", icon: ReceiptText },
   { label: "Tahsilatlar", href: "/admin/payments", icon: CircleDollarSign },
   { label: "Odalar", href: "/admin/rooms", icon: BedDouble },
   { label: "Görevler", href: "/admin/tasks", icon: CheckSquare },

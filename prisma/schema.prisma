@@ -108,6 +108,23 @@ enum PhysicalRoomStatus {
   OUT_OF_SERVICE
 }
 
+enum FolioStatus {
+  OPEN
+  CLOSED
+  VOID
+}
+
+enum FolioItemCategory {
+  ACCOMMODATION
+  FOOD
+  BEVERAGE
+  MINIBAR
+  SPA
+  LAUNDRY
+  TRANSPORT
+  OTHER
+}
+
 model Hotel {
   id            String                @id @default(cuid())
   name          String
@@ -129,6 +146,8 @@ model Hotel {
   guests        Guest[]
   physicalRooms PhysicalRoom[]
   stays         Stay[]
+  folios        Folio[]
+  folioItems    FolioItem[]
 }
 
 model RoomType {
@@ -170,6 +189,7 @@ model Reservation {
   guestId     String?
   guest       Guest?            @relation(fields: [guestId], references: [id], onDelete: SetNull)
   stay        Stay?
+  folio       Folio?
 }
 
 model Task {
@@ -390,4 +410,40 @@ model Stay {
 
   @@index([hotelId, status])
   @@index([physicalRoomId, status])
+}
+
+model Folio {
+  id            String      @id @default(cuid())
+  hotelId       String
+  hotel         Hotel       @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  reservationId String      @unique
+  reservation   Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  status        FolioStatus @default(OPEN)
+  notes         String?
+  closedAt      DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  items         FolioItem[]
+
+  @@index([hotelId, status])
+}
+
+model FolioItem {
+  id          String            @id @default(cuid())
+  hotelId     String
+  hotel       Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  folioId     String
+  folio       Folio             @relation(fields: [folioId], references: [id], onDelete: Cascade)
+  category    FolioItemCategory @default(OTHER)
+  description String
+  quantity    Int               @default(1)
+  unitPrice   Int
+  amount      Int
+  currency    String            @default("TRY")
+  postedAt    DateTime          @default(now())
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([folioId, postedAt])
+  @@index([hotelId, category])
 }

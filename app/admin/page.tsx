@@ -7,6 +7,7 @@ import {
   CreditCard,
   DoorOpen,
   Network,
+  ReceiptText,
   UserRoundCheck,
   UsersRound
 } from "lucide-react";
@@ -107,6 +108,11 @@ export default async function AdminHomePage() {
               <CircleDollarSign />
               <strong>Tahsilat</strong>
               <span>Ödeme işlemi aç</span>
+            </Link>
+            <Link href="/admin/folios">
+              <ReceiptText />
+              <strong>Oda hesabı</strong>
+              <span>Folyo ve harcamalar</span>
             </Link>
             <Link href="/admin/rooms">
               <BedDouble />

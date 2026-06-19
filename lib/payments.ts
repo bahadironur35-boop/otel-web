@@ -37,9 +37,11 @@ export async function getPaymentWorkspace() {
         reservations: {
           include: {
             roomType: true,
+            folio: {
+              include: { items: true }
+            },
             payments: {
               orderBy: { createdAt: "desc" },
-              take: 1
             }
           },
           orderBy: { createdAt: "desc" },
@@ -63,15 +65,27 @@ export async function getPaymentWorkspace() {
 
     return {
       schemaReady: true,
-      reservations: hotel.reservations.map((reservation) => ({
-        id: reservation.id,
-        guestName: reservation.guestName,
-        roomName: reservation.roomType.name,
-        amount: reservation.totalAmount,
-        amountLabel: formatCurrency(reservation.totalAmount, reservation.currency),
-        currency: reservation.currency,
-        latestPaymentStatus: reservation.payments[0]?.status ?? null
-      })),
+      reservations: hotel.reservations.map((reservation) => {
+        const total =
+          reservation.totalAmount +
+          (reservation.folio?.items.reduce((sum, item) => sum + item.amount, 0) ?? 0);
+        const paid = reservation.payments
+          .filter((payment) => payment.status === "PAID")
+          .reduce((sum, payment) => sum + payment.amount, 0);
+        const balance = Math.max(total - paid, 0);
+
+        return {
+          id: reservation.id,
+          guestName: reservation.guestName,
+          roomName: reservation.roomType.name,
+          amount: total,
+          amountLabel: formatCurrency(total, reservation.currency),
+          balance,
+          balanceLabel: formatCurrency(balance, reservation.currency),
+          currency: reservation.currency,
+          latestPaymentStatus: reservation.payments[0]?.status ?? null
+        };
+      }),
       payments: hotel.payments.map((payment) => ({
         id: payment.id,
         reservationId: payment.reservationId,

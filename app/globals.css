@@ -3271,3 +3271,308 @@ body:has(.admin-shell) {
     grid-template-columns: 1fr;
   }
 }
+
+/* Guest folio */
+.folio-workspace {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.55fr) minmax(420px, 1.15fr) minmax(360px, 0.9fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.folio-room-list,
+.folio-account,
+.folio-products {
+  min-width: 0;
+}
+
+.folio-room-buttons {
+  display: grid;
+}
+
+.folio-room-buttons > a {
+  display: grid;
+  gap: 4px;
+  min-height: 84px;
+  padding: 14px 16px;
+  border-top: 1px solid #e1e7ef;
+  color: #26364b;
+  text-decoration: none;
+}
+
+.folio-room-buttons > a:hover,
+.folio-room-buttons > a.is-selected {
+  color: #124f9f;
+  background: #edf5ff;
+  box-shadow: inset 4px 0 #1767d2;
+}
+
+.folio-room-buttons > a span {
+  overflow: hidden;
+  color: #68768a;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folio-room-buttons > a b {
+  color: #1767d2;
+}
+
+.folio-account-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  border-bottom: 1px solid #dfe6ee;
+}
+
+.folio-account-header > div {
+  min-width: 0;
+}
+
+.folio-account-header span {
+  color: #1767d2;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.folio-account-header h3 {
+  margin: 5px 0;
+  color: #132238;
+  font-size: 1.2rem;
+}
+
+.folio-account-header p {
+  margin: 0;
+  color: #68768a;
+  font-size: 0.84rem;
+}
+
+.folio-account-header > a {
+  align-self: center;
+  min-height: 42px;
+  padding: 11px 13px;
+  border-radius: 5px;
+  color: #1759a8;
+  background: #edf5ff;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.folio-line-list {
+  min-height: 310px;
+}
+
+.folio-line {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) 46px 100px 38px;
+  gap: 10px;
+  align-items: center;
+  min-height: 66px;
+  padding: 10px 18px;
+  border-bottom: 1px solid #e6ebf1;
+}
+
+.folio-line > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.folio-line > div:first-child span,
+.folio-line > span {
+  color: #718096;
+  font-size: 0.78rem;
+}
+
+.folio-line > strong {
+  text-align: right;
+}
+
+.folio-line-accommodation {
+  background: #f7f9fc;
+}
+
+.folio-line form {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.folio-line button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 0;
+  border-radius: 5px;
+  color: #a63c33;
+  background: #fff0ed;
+  cursor: pointer;
+}
+
+.folio-totals {
+  display: grid;
+  gap: 8px;
+  padding: 18px 20px;
+  border-top: 1px solid #dce4ed;
+  background: #fbfcfe;
+}
+
+.folio-totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: #68768a;
+}
+
+.folio-totals strong {
+  color: #24334a;
+}
+
+.folio-totals .folio-grand-total {
+  margin-top: 5px;
+  padding-top: 13px;
+  border-top: 1px solid #d9e1eb;
+  color: #132238;
+  font-size: 1.05rem;
+}
+
+.folio-grand-total strong {
+  color: #1767d2;
+  font-size: 1.45rem;
+}
+
+.folio-product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 14px;
+}
+
+.folio-product-grid form {
+  min-width: 0;
+}
+
+.folio-product-grid button {
+  display: grid;
+  width: 100%;
+  min-height: 112px;
+  place-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border: 1px solid #dce4ed;
+  border-radius: 6px;
+  color: #26364b;
+  background: #fff;
+  cursor: pointer;
+}
+
+.folio-product-grid button:hover {
+  border-color: #1767d2;
+  color: #1759a8;
+  background: #edf5ff;
+}
+
+.folio-product-grid button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.folio-product-grid button strong {
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.folio-product-grid button span {
+  color: #1767d2;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.folio-custom-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid #dfe6ee;
+}
+
+.folio-custom-item label {
+  display: grid;
+  gap: 6px;
+  color: #536174;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.folio-custom-item input,
+.folio-custom-item select {
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 10px;
+  border: 1px solid #d9e1eb;
+  border-radius: 5px;
+  color: #17243a;
+  background: #fff;
+}
+
+.folio-custom-item > button {
+  grid-column: 1 / -1;
+  min-height: 46px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: #1767d2;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.folio-custom-item > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+@media (max-width: 1250px) {
+  .folio-workspace {
+    grid-template-columns: minmax(210px, 0.55fr) minmax(0, 1.45fr);
+  }
+
+  .folio-products {
+    grid-column: 1 / -1;
+  }
+
+  .folio-product-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 850px) {
+  .folio-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .folio-products {
+    grid-column: auto;
+  }
+
+  .folio-room-buttons {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .folio-product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .folio-room-buttons,
+  .folio-product-grid,
+  .folio-custom-item {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .folio-line {
+    grid-template-columns: minmax(120px, 1fr) 36px 85px 36px;
+    padding-inline: 10px;
+  }
+}

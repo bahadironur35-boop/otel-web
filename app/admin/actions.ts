@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import {
   ChannelStatus,
   ComplianceStatus,
+  FolioItemCategory,
   IntegrationStatus,
   GuestStatus,
   PaymentProvider,
@@ -707,11 +708,28 @@ export async function createPaymentRequest(formData: FormData) {
   }
 
   const reservation = await prisma.reservation.findUnique({
-    where: { id: reservationId }
+    where: { id: reservationId },
+    include: {
+      folio: {
+        include: { items: true }
+      },
+      payments: {
+        where: { status: PaymentStatus.PAID }
+      }
+    }
   });
 
   if (!reservation) {
     redirect("/admin/payments?result=error");
+  }
+
+  const folioExtras =
+    reservation.folio?.items.reduce((sum, item) => sum + item.amount, 0) ?? 0;
+  const paidTotal = reservation.payments.reduce((sum, payment) => sum + payment.amount, 0);
+  const remainingAmount = reservation.totalAmount + folioExtras - paidTotal;
+
+  if (remainingAmount < 1) {
+    redirect("/admin/payments?result=already-paid");
   }
 
   await prisma.$transaction([
@@ -721,7 +739,7 @@ export async function createPaymentRequest(formData: FormData) {
         reservationId,
         provider,
         status: paymentLink ? PaymentStatus.LINK_SENT : PaymentStatus.CREATED,
-        amount: reservation.totalAmount,
+        amount: remainingAmount,
         currency: reservation.currency,
         paymentLink: paymentLink || null,
         expiresAt: expiresAtValue ? new Date(expiresAtValue) : null
@@ -862,6 +880,15 @@ export async function checkInGuest(formData: FormData) {
     prisma.physicalRoom.update({
       where: { id: physicalRoomId },
       data: { status: PhysicalRoomStatus.OCCUPIED }
+    }),
+    prisma.folio.upsert({
+      where: { reservationId: reservation.id },
+      update: { status: "OPEN", closedAt: null },
+      create: {
+        hotelId: reservation.hotelId,
+        reservationId: reservation.id,
+        status: "OPEN"
+      }
     })
   ]);
 
@@ -908,4 +935,52 @@ export async function checkOutGuest(formData: FormData) {
   revalidatePath("/admin/guests");
   revalidatePath("/admin/rooms");
   redirect(`/admin/guests/${stay.guestId}?result=checked-out`);
+}
+
+export async function addFolioItem(formData: FormData) {
+  const folioId = String(formData.get("folioId") ?? "");
+  const description = String(formData.get("description") ?? "").trim();
+  const category = String(formData.get("category") ?? FolioItemCategory.OTHER) as FolioItemCategory;
+  const quantity = Math.max(Number(formData.get("quantity") ?? 1), 1);
+  const unitPrice = Math.max(Number(formData.get("unitPrice") ?? 0), 0);
+
+  if (!folioId || !description || unitPrice < 1) {
+    redirect(`/admin/folios?folio=${folioId}&result=error`);
+  }
+
+  const folio = await prisma.folio.findUnique({ where: { id: folioId } });
+  if (!folio || folio.status !== "OPEN") {
+    redirect("/admin/folios?result=error");
+  }
+
+  await prisma.folioItem.create({
+    data: {
+      hotelId: folio.hotelId,
+      folioId,
+      description,
+      category,
+      quantity,
+      unitPrice,
+      amount: quantity * unitPrice
+    }
+  });
+
+  revalidatePath("/admin/folios");
+  revalidatePath("/admin/payments");
+  redirect(`/admin/folios?folio=${folioId}&result=added`);
+}
+
+export async function removeFolioItem(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const folioId = String(formData.get("folioId") ?? "");
+
+  if (!id || !folioId) {
+    redirect("/admin/folios?result=error");
+  }
+
+  await prisma.folioItem.delete({ where: { id } });
+
+  revalidatePath("/admin/folios");
+  revalidatePath("/admin/payments");
+  redirect(`/admin/folios?folio=${folioId}&result=removed`);
 }
